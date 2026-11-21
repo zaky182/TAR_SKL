@@ -1,0 +1,35 @@
+{
+  "name": "tar-system",
+  "version": "1.0.0",
+  "description": "Technical Analysis Report (TAR) System - PT Harapan Mitra Lestari",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "users": "node scripts/manage-users.js",
+    "import": "node scripts/import-master.js",
+    "compress-photos": "node scripts/compress-photos.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "bcrypt": "^5.1.1",
+    "compression": "^1.7.5",
+    "cookie-parser": "^1.4.7",
+    "csv-parse": "^5.5.6",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "pdfkit": "^0.15.2",
+    "pg": "^8.13.1",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.33.5"
+  }
+}

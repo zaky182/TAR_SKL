@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TAR System – PT Harapan Mitra Lestari</title>
+<link rel="icon" href="/logo.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root{--navy:#1E3A8A;--navy-d:#172c68;--blue:#2563EB;--bg:#F8FAFC;--card:#FFFFFF;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;
+  --draft:#6B7280;--sub:#D97706;--app:#059669;--rej:#DC2626;--shadow:0 1px 3px rgba(0,0,0,.1);--sbw:260px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:Inter,Roboto,system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+h1,h2,h3{margin:0}
+.muted{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- login ---------- */
+#login{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%)}
+.login-card{background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:32px 28px;width:100%;max-width:400px}
+.login-card .logo{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.login-card .logo img{width:60px;height:auto}
+.login-copy{margin:18px 0 0;font-size:12px;line-height:1.4;color:rgba(255,255,255,.75);text-align:center}
+.login-card h1{font-size:20px;color:var(--navy)}
+.login-card p{margin:2px 0 0;color:var(--muted);font-size:13px}
+
+/* ---------- form controls ---------- */
+label.fl{display:block;font-weight:600;font-size:13px;margin:0 0 4px;color:#1e293b}
+.inp,select.inp,textarea.inp{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;min-height:42px}
+textarea.inp{resize:vertical;min-height:96px}
+.inp:focus{outline:2px solid #bfdbfe;border-color:var(--blue)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;background:var(--blue);color:#fff;min-height:42px;transition:filter .15s}
+.btn:hover{filter:brightness(.93)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.navy{background:var(--navy)}.btn.green{background:var(--app)}.btn.red{background:var(--rej)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid #cbd5e1}
+.btn.sm{padding:6px 10px;min-height:34px;font-size:13px}
+.btn.block{width:100%}
+.btn-ico{border:1px solid var(--line);background:#fff;border-radius:6px;width:34px;height:34px;cursor:pointer;color:var(--navy)}
+.btn-ico:hover{background:#eff6ff}.btn-ico.del{color:var(--rej)}
+.field{margin-bottom:14px}
+
+/* ---------- layout ---------- */
+#app{display:flex;min-height:100vh}
+#sidebar{position:fixed;inset:0 auto 0 0;width:var(--sbw);background:var(--navy);color:#fff;display:flex;flex-direction:column;z-index:60;transition:width .2s,transform .2s;border-radius:0 18px 18px 0;overflow:hidden}
+.sb-head{display:flex;align-items:center;gap:12px;padding:18px 16px;min-height:80px}
+.sb-logo{background:#fff;border-radius:10px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex:none}
+.sb-logo img{width:36px}
+.sb-title b{display:block;font-size:16px;letter-spacing:.3px}.sb-title small{font-size:11px;opacity:.85}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:4px;overflow:auto}
+.sb-nav a{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:10px;color:#e0e7ff;text-decoration:none;font-weight:600;white-space:nowrap}
+.sb-nav a i{width:22px;text-align:center;font-size:17px}
+.sb-nav a:hover{background:rgba(255,255,255,.1)}
+.sb-nav a.active{background:var(--blue);color:#fff}
+.sb-foot{padding:14px;border-top:1px solid rgba(255,255,255,.15)}
+.sb-user{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sb-user .av{width:42px;height:42px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;cursor:pointer}
+.sb-user .av img,.av-big img{width:100%;height:100%;object-fit:cover;display:block}
+.sb-user .av:hover{box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+.av-big{width:120px;height:120px;border-radius:50%;border:4px solid var(--navy);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:44px;color:var(--navy);background:#f1f5f9}
+.sb-user b{display:block;font-size:14px;line-height:1.2}.sb-user small{opacity:.85}
+.sb-btns{display:flex;gap:8px}
+.sb-btns button{flex:1;border:0;border-radius:6px;padding:8px;background:#e2e8f0;color:var(--navy);font-weight:600;cursor:pointer;white-space:nowrap}
+#backdrop{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:55;display:none}
+#main{flex:1;margin-left:var(--sbw);min-width:0;transition:margin .2s}
+body.collapsed{--sbw:76px}
+body.collapsed .sb-title,body.collapsed .sb-nav a span,body.collapsed .sb-user div,body.collapsed .sb-btns span{display:none}
+body.collapsed .sb-nav a{justify-content:center;padding:12px 0}
+body.collapsed .sb-btns{flex-direction:column}
+body.collapsed .sb-user{justify-content:center}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.95);backdrop-filter:blur(6px);display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid var(--line)}
+.burger{background:none;border:0;font-size:22px;color:#0f172a;cursor:pointer;padding:6px 8px}
+.topbar h1{font-size:22px;color:var(--navy);flex:1}
+.bell{position:relative;background:none;border:0;font-size:22px;color:var(--navy);cursor:pointer;padding:6px 8px}
+.bell .badge{position:absolute;top:0;right:0;background:var(--rej);color:#fff;font-size:11px;font-weight:700;border-radius:10px;min-width:18px;height:18px;line-height:18px;text-align:center;padding:0 4px}
+#notifPanel{position:fixed;right:20px;top:60px;width:340px;max-width:calc(100vw - 24px);background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);z-index:70;overflow:hidden}
+#notifPanel header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);font-weight:700}
+#notifPanel .list{max-height:380px;overflow:auto}
+.nitem{padding:11px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer;font-size:13px}
+.nitem.unread{background:#eff6ff}.nitem small{color:var(--muted);display:block;margin-top:2px}
+.nitem:hover{background:#f1f5f9}
+#view{padding:24px}
+
+/* ---------- komponen ---------- */
+.card{background:var(--card);border-radius:12px;box-shadow:var(--shadow);padding:18px}
+.card h2{font-size:16px;color:var(--navy);margin-bottom:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.toolbar .grow{flex:1}
+.pill-title{background:#e5e7eb;border-radius:6px;padding:4px 12px;font-weight:700;font-size:14px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.kpi{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:14px 16px;border-left:4px solid var(--navy)}
+.kpi small{color:var(--muted);font-weight:600}.kpi b{display:block;font-size:26px;line-height:1.2}
+.kpi.draft{border-color:var(--draft)}.kpi.sub{border-color:var(--sub)}.kpi.app{border-color:var(--app)}.kpi.rej{border-color:var(--rej)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.chart-box{position:relative;height:300px}
+.badge-st{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap}
+.st-draft{background:var(--draft)}.st-sub{background:var(--sub)}.st-gl{background:var(--blue)}.st-app{background:var(--app)}.st-rej{background:var(--rej)}
+
+.tbl-tools{display:flex;gap:10px;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table.tbl{width:100%;border-collapse:collapse;min-width:820px;background:#fff}
+.tbl th,.tbl td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl thead th{background:#f1f5f9;font-weight:700;white-space:nowrap;color:#1e293b}
+.tbl tr.frow th{background:#f8fafc;padding:6px 8px}
+.tbl tr.frow input,.tbl tr.frow select{width:100%;padding:5px 7px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;font-weight:400;min-width:70px}
+.tbl tbody tr:hover{background:#f8fafc}
+.tbl td.c{text-align:center}
+.own{display:flex;align-items:center;gap:8px}
+.ava{width:28px;height:28px;border-radius:50%;object-fit:cover;flex:none;background:#e2e8f0;border:1px solid #cbd5e1;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#64748b}
+.tbl-foot{margin-top:8px;color:var(--muted);font-size:12px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+.tabs button{border:0;background:none;padding:10px 16px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs button.on{color:var(--navy);border-color:var(--blue)}
+
+/* ---------- form TAR ---------- */
+.fsec{margin-bottom:20px}
+.fsec h2{display:flex;align-items:center;gap:10px;font-size:17px;color:var(--navy);margin-bottom:12px}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.unit-info{font-size:12px;color:var(--muted);margin-top:4px;min-height:18px}
+.dz{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:2px dashed #93c5fd;background:#eff6ff;color:var(--navy);border-radius:12px;padding:22px;cursor:pointer;text-align:center;font-weight:600}
+.dz i{font-size:34px}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+.ph{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.ph img{width:100%;height:120px;object-fit:cover;display:block;background:#e2e8f0;cursor:zoom-in}
+.ph .b{padding:8px;display:flex;gap:6px}.ph .b input{flex:1;min-width:0;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px}
+.formbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-top:8px}
+.formbar .gl{flex:1;min-width:220px;max-width:340px}
+.formbar .acts{display:flex;gap:12px;margin-left:auto}
+.banner{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:10px;padding:12px 14px;margin-bottom:16px}
+
+/* ---------- modal detail ---------- */
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:80;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
+.modal-box{background:#fff;border-radius:14px;width:100%;max-width:900px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.modal-x{position:absolute;right:12px;top:10px;border:0;background:none;font-size:22px;cursor:pointer;color:var(--muted);z-index:2}
+.dh{padding:20px 24px;border-bottom:1px solid var(--line);padding-right:50px}
+.dh h2{font-size:18px;color:var(--navy);margin-bottom:6px}
+.db{padding:20px 24px}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 18px;margin-bottom:16px}
+.kv small{display:block;color:var(--muted);font-weight:600;font-size:12px}
+.sect{margin-bottom:16px}.sect h3{font-size:14px;color:var(--navy);margin-bottom:6px}
+.sect .tx{white-space:pre-wrap;background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.scorebox{display:flex;gap:10px;flex-wrap:wrap}
+.scorebox div{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:8px 14px;text-align:center}
+.scorebox b{display:block;font-size:20px;color:var(--app)}
+.log{list-style:none;margin:0;padding:0}
+.log li{padding:8px 0 8px 14px;border-left:3px solid var(--blue);margin-left:6px;position:relative}
+.log small{color:var(--muted)}
+.da{display:flex;gap:10px;flex-wrap:wrap;padding:16px 24px;border-top:1px solid var(--line);background:#f8fafc;border-radius:0 0 14px 14px}
+.da .btn{flex:0 1 auto}
+.sw-form{text-align:left}.sw-form label{display:block;font-weight:600;font-size:13px;margin:10px 0 3px}
+.sw-form .inp{margin:0}
+
+/* ---------- cetak A4 (mengikuti sketsa Report_Cetak) ---------- */
+#printArea{display:none}
+@page{size:A4;margin:12mm 12mm 18mm 12mm;@bottom-right{content:"Hal " counter(page) " / " counter(pages);font-size:7pt;color:#555;width:20%;text-align:right;vertical-align:top}}
+@media print{
+  html,body{background:#fff}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block!important;color:#000;font-family:Inter,Arial,sans-serif;font-size:10pt;line-height:1.45}
+  .pa-blk,.pa-sign,.pa-ph{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.pa-head{display:flex;align-items:center;gap:12px;padding-bottom:8px;border-bottom:1px solid #222}
+.pa-head img{height:46px}
+.pa-head .co b{display:block;font-size:13pt;color:#1E3A8A}.pa-head .co span{font-size:10pt;font-weight:700;color:#1E3A8A}.pa-head .co span.pa-js{font-size:9.5pt;font-weight:500}
+.pa-head .no{margin-left:auto;text-align:right;font-weight:700;color:#1E3A8A;font-size:11.5pt;line-height:1.5}
+.pa-st{display:inline-block;border:1.5px solid currentColor;border-radius:999px;padding:1px 14px;font-weight:700;font-size:10.5pt;line-height:1.5}
+.pa-st-Approved{color:#059669;background:#ecfdf5}.pa-st-Submitted{color:#EA580C;background:#fff7ed}.pa-st-Rejected{color:#DC2626;background:#fef2f2}.pa-st-Draft{color:#6B7280;background:#f3f4f6}
+.pa-unit{padding:10px 0 12px;border-bottom:1px solid #222}
+.pa-g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px}
+.pa-unit .pa-f.full{margin-top:8px}
+.pa-f b{display:block;font-size:9pt;margin-bottom:2px}
+.pa-f div{background:#e5e7eb;border-radius:4px;padding:4px 8px;min-height:7mm;word-break:break-word}
+.pa-blk{margin-top:10px}.pa-blk b{display:block;font-size:9.5pt;margin-bottom:2px}
+.pa-blk .tx{background:#e5e7eb;border-radius:5px;padding:8px 10px;white-space:pre-wrap;min-height:16mm}
+.pa-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:2px}
+.pa-ph{text-align:center}.pa-ph img{width:100%;height:38mm;object-fit:contain;border-radius:5px;background:#f1f5f9;border:1px solid #cbd5e1;display:block}.pa-ph div{font-size:8pt;margin-top:2px}
+.pa-sec-line{border-top:1px solid #222;margin-top:14px}
+.pa-sign{display:flex;justify-content:space-around;gap:16px;padding-top:12px;text-align:center}
+.pa-sign .box{width:46%}.pa-sign .box>b{display:block;font-size:10pt;margin-bottom:4px}
+.pa-sign .qr{background:#fff;padding:2mm;border-radius:3px;line-height:0}
+.pa-sign .qr svg{width:22mm;height:22mm}.pa-sign .vf{font-size:7pt;color:#555}
+.pa-sign .sig{background:#e5e7eb;border-radius:5px;padding:8px;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;text-align:left}
+.pa-sign .meta{display:flex;flex-direction:column;gap:2px;align-items:flex-start}
+.esign{display:inline-block;border:2px solid #1E3A8A;color:#1E3A8A;border-radius:6px;padding:2px 10px;font-weight:700;font-size:8.5pt;transform:rotate(-3deg);background:#fff}
+.esign.wait{border-color:#999;color:#777}
+.pa-sign small{font-size:8.5pt}
+
+/* ---------- form & cetak SKL (mengikuti template PDF) ---------- */
+.skl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:1024px){.skl-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:768px){.skl-grid{grid-template-columns:1fr}}
+.skl-review-box{background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:14px 16px;margin-top:14px}
+.skl-review-box h3{font-size:14px;color:var(--navy);margin:0 0 8px}
+
+.skl-sheet{border:2.6pt solid #000;padding:8mm 10mm 7mm 10mm;font-family:'Times New Roman',Times,serif;color:#000;background:#fff;box-sizing:border-box;min-height:267mm;display:flex;flex-direction:column}
+.skl-hd{display:flex;align-items:center;gap:14px;margin-bottom:4mm}
+.skl-hd img{height:18mm;width:auto;object-fit:contain}
+.skl-hd .co{flex:1;text-align:center;font-family:Calibri,Arial,sans-serif;font-size:19pt;font-weight:400;letter-spacing:.3px;padding-right:10mm}
+.skl-title{text-align:center;font-family:'Times New Roman',Times,serif;font-size:21pt;font-weight:700;margin:2mm 0 7mm;letter-spacing:.2px}
+.skl-meta{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm 10mm;font-size:12pt;margin-bottom:7mm}
+.skl-row{display:flex;align-items:baseline;gap:4px}
+.skl-row .k{width:28mm;flex:none}
+.skl-row .c{width:3mm;flex:none}
+.skl-row .v{flex:1;border-bottom:1pt dotted #000;min-height:5.5mm;padding:0 2px;line-height:1.25}
+.skl-sec{margin-bottom:6mm}
+.skl-sec-h{font-size:12pt;font-weight:700;text-decoration:underline;margin-bottom:2mm}
+.skl-sec-h.it{font-style:italic}
+.skl-lines{position:relative;font-size:11.5pt;line-height:7.5mm;min-height:30mm;white-space:pre-wrap;word-break:break-word;
+  background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(7.5mm - 0.7pt),#000 calc(7.5mm - 0.7pt),#000 7.5mm);
+  background-size:100% 7.5mm;padding-top:.4mm}
+.skl-check-hd{font-size:12pt;font-weight:700;margin:2mm 0 2.5mm}
+.skl-gl-row{display:flex;align-items:baseline;gap:4px;font-size:12pt;margin-bottom:3mm;width:54%}
+.skl-gl-row .k{width:26mm;flex:none}
+.skl-gl-row .c{width:3mm;flex:none}
+.skl-gl-row .v{flex:1;border-bottom:0.8pt solid #000;min-height:5.5mm;padding:0 2px}
+.skl-cbs{display:flex;justify-content:center;gap:24mm;margin:5mm 0 6mm;font-size:12pt}
+.skl-cb{display:inline-flex;align-items:center;gap:3.5mm}
+.skl-box{display:inline-flex;align-items:center;justify-content:center;width:7mm;height:5.5mm;border:1.6pt solid #000;font-size:13pt;font-weight:700;line-height:1}
+.skl-sig-top{display:grid;grid-template-columns:2fr 1fr;font-size:12pt;margin:4mm 0 2mm}
+.skl-sig-top div:first-child{padding-left:14mm}
+.skl-sig-top div:last-child{text-align:center}
+.skl-sigs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6mm;align-items:end;margin-top:2mm}
+.skl-sig-col{display:flex;flex-direction:column;align-items:center;text-align:center;min-height:38mm;justify-content:flex-end}
+.skl-sig-col.left{align-items:flex-start;text-align:left}
+.skl-qr{line-height:0;margin-bottom:1.5mm}
+.skl-qr svg{width:21mm;height:21mm}
+.skl-ts{font-size:8.5pt;line-height:1.2;margin-bottom:1mm}
+.skl-nm{font-size:10.5pt;font-weight:700;line-height:1.2;margin-bottom:1.5mm}
+.skl-sig-line{width:38mm;border-top:1.2pt solid #000;padding-top:1mm;font-size:11.5pt;line-height:1.25}
+.skl-sig-col.left .skl-sig-line{width:34mm}
+.skl-foot{margin-top:auto;padding-top:7mm;font-size:10.5pt;line-height:1.45}
+.skl-foot table{border-collapse:collapse;width:100%}
+.skl-foot td{padding:0.4mm 0;vertical-align:top}
+.skl-foot td.b{width:6mm}
+.skl-foot td.k{width:24mm}
+
+/* ---------- pop up (balon pesan) ---------- */
+#popup{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(255,255,255,.88);backdrop-filter:blur(2px)}
+.bubble{--bc:#031E7A;position:relative;background:#fff;border:8px solid var(--bc);border-radius:28px 28px 28px 0;width:100%;max-width:520px;min-width:260px;margin-bottom:48px;font-family:Roboto,Arial,sans-serif;box-shadow:0 8px 30px rgba(3,30,122,.18)}
+.bubble::before,.bubble::after{content:"";position:absolute;left:-8px;top:100%;width:48px;height:48px}
+.bubble::before{background:var(--bc);clip-path:polygon(0 0,100% 0,0 100%)}
+.bubble::after{background:#fff;clip-path:polygon(8px 0,36.7px 0,8px 28.7px)}
+.bubble-tx{padding:30px 34px;font-size:20px;line-height:1.45;color:#000;white-space:pre-wrap;word-break:break-word;max-height:60vh;overflow:auto}
+.bubble-user{display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px 30px 0}
+.bubble-user img,.bubble-user .ph-none{width:130px;height:130px;border-radius:50%;object-fit:cover;border:5px solid #031E7A;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:48px;color:#031E7A}
+.bubble-user b{font-size:20px;text-align:center;color:#000}
+.bubble-user+.bubble-tx{padding-top:14px;text-align:center}
+.bubble-x{position:absolute;top:-22px;right:-22px;width:38px;height:38px;border-radius:50%;border:3px solid #FF0000;background:#fff;color:#FF0000;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;padding:0}
+.bubble-x:hover{background:#fee2e2}
+
+/* ---------- cek kemiripan ---------- */
+.sw{display:inline-flex;align-items:center;gap:10px;font-weight:600;cursor:pointer;user-select:none}
+.sw input{position:absolute;opacity:0;width:0;height:0}
+.sw span{position:relative;width:46px;height:26px;border-radius:999px;background:#cbd5e1;transition:background .15s;flex:none}
+.sw span::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .15s}
+.sw input:checked+span{background:var(--app)}.sw input:checked+span::after{left:23px}
+.sw input:focus-visible+span{outline:2px solid #93c5fd;outline-offset:2px}
+.sim-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.sim-note{font-size:12px;color:var(--muted);margin:6px 0 10px}
+.sim-row{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:#fff}
+.sim-row.exact{border-color:#fca5a5;background:#fef2f2}.sim-row.warn{border-color:#fdba74;background:#fff7ed}
+.sim-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.sim-bar{height:8px;border-radius:99px;background:#e2e8f0;overflow:hidden;margin:8px 0 6px}.sim-bar i{display:block;height:100%}
+.chip{display:inline-block;padding:1px 8px;border-radius:999px;background:#eef2ff;color:#1e3a8a;font-size:12px;font-weight:600;margin:2px 4px 2px 0}
+.sim-acts{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left}
+.cmp h4{margin:0 0 4px;font-size:13px;color:var(--navy)}
+.cmp .tx{white-space:pre-wrap;background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;max-height:260px;overflow:auto;margin-bottom:10px}
+mark{background:#fde68a;border-radius:2px;padding:0 1px}
+@media (max-width:768px){.cmp{grid-template-columns:1fr}}
+
+/* ---------- responsif ---------- */
+@media (max-width:1024px){
+  body{--sbw:76px}
+  body.sb-open-wide #sidebar{width:260px;box-shadow:0 0 30px rgba(0,0,0,.35)}
+  body:not(.sb-open-wide) .sb-title,body:not(.sb-open-wide) .sb-nav a span,body:not(.sb-open-wide) .sb-user div,body:not(.sb-open-wide) .sb-btns span{display:none}
+  body:not(.sb-open-wide) .sb-nav a{justify-content:center;padding:12px 0}
+  body:not(.sb-open-wide) .sb-btns{flex-direction:column}
+  body:not(.sb-open-wide) .sb-user{justify-content:center}
+  .grid5{grid-template-columns:repeat(3,1fr)}
+  .kv{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:768px){
+  body,body.collapsed{--sbw:270px}
+  #sidebar{transform:translateX(-105%);width:270px}
+  body.sb-open #sidebar{transform:none}
+  body.sb-open #backdrop{display:block}
+  #sidebar .sb-title,#sidebar .sb-nav a span,#sidebar .sb-user div,#sidebar .sb-btns span{display:revert!important}
+  #sidebar .sb-nav a{justify-content:flex-start!important;padding:14px!important}
+  #sidebar .sb-btns{flex-direction:row!important}#sidebar .sb-user{justify-content:flex-start!important}
+  #main{margin-left:0}
+  .topbar{padding:10px 12px}.topbar h1{font-size:18px}
+  #view{padding:14px 12px 96px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .charts{grid-template-columns:1fr}
+  .grid5{grid-template-columns:1fr}
+  .kv{grid-template-columns:1fr}
+  .frow{display:none}
+  .formbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px;margin:0;z-index:30;box-shadow:0 -2px 8px rgba(0,0,0,.08)}
+  .formbar .gl{flex:1 1 100%;max-width:none}
+  .formbar .acts{margin:0;width:100%}.formbar .acts .btn{flex:1;min-height:52px;font-size:15px}
+  .da .btn{flex:1 1 100%;min-height:54px;font-size:16px}
+  .dh,.db{padding:16px}
+  /* tabel menjadi kartu */
+  table.tbl{min-width:0}.tbl thead{display:none}
+  .tbl,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+  .tbl tr{border-bottom:6px solid var(--bg);padding:6px 0}
+  .tbl td{border:0;padding:4px 12px;display:flex;justify-content:space-between;gap:12px;text-align:right}
+  .tbl td::before{content:attr(data-label);font-weight:600;color:var(--muted);text-align:left;flex:none}
+  .tbl td.c{text-align:right}
+  .tbl-wrap{border:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<div id="login" hidden>
+  <form class="login-card" id="loginForm" autocomplete="on">
+    <div class="logo"><img src="/logo.png" alt="HML"><div><h1>TAR System</h1><p>Plant Dept · PT Harapan Mitra Lestari</p></div></div>
+    <div class="field"><label class="fl" for="lu">Username (NRP)</label><input class="inp" id="lu" name="username" autocomplete="username" inputmode="numeric" required></div>
+    <div class="field"><label class="fl" for="lp">Password</label><input class="inp" id="lp" name="password" type="password" autocomplete="current-password" required></div>
+    <button class="btn navy block" id="loginBtn" type="submit"><i class="fa-solid fa-right-to-bracket"></i> Masuk</button>
+    <div style="text-align:center;margin-top:14px"><a href="#" id="forgot" style="color:var(--blue);font-weight:600;text-decoration:none">Lupa password?</a></div>
+  </form>
+  <p class="login-copy">© 2026 Mubarak's Project · All Rights Reserved</p>
+</div>
+
+<!-- ===================== APLIKASI ===================== -->
+<div id="app" hidden>
+  <aside id="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo"><img src="/logo.png" alt="HML"></div>
+      <div class="sb-title"><b>PLANT DEPT</b><small>PT Harapan Mitra Lestari</small></div>
+    </div>
+    <nav class="sb-nav" id="nav"></nav>
+    <div class="sb-foot">
+      <div class="sb-user"><div class="av" id="uAv" title="Ganti foto profil" role="button" tabindex="0"><i class="fa-regular fa-user"></i></div><div><b id="uName">Nama User</b><small id="uRole">Role</small></div></div>
+      <div class="sb-btns">
+        <button id="btnPass" title="Ganti password"><i class="fa-solid fa-key"></i> <span>Password</span></button>
+        <button id="btnOut" title="Keluar"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Keluar</span></button>
+      </div>
+    </div>
+  </aside>
+  <div id="backdrop"></div>
+  <div id="main">
+    <header class="topbar">
+      <button class="burger" id="burger" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+      <h1 id="pageTitle">Dashboard TAR</h1>
+      <button class="bell" id="bell" aria-label="Notifikasi"><i class="fa-solid fa-bell"></i><span class="badge" id="bellN" hidden>0</span></button>
+    </header>
+    <div id="notifPanel" hidden></div>
+    <main id="view"></main>
+  </div>
+</div>
+
+<div class="modal" id="modal" hidden><div class="modal-box"><button class="modal-x" id="modalX" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button><div id="modalBody"></div></div></div>
+<div id="printArea"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   Helper umum
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const TZ = 'Asia/Jakarta';
+const todayJkt = () => new Date().toLocaleDateString('sv-SE', { timeZone: TZ });
+const fmtDate = (d) => (d ? new Date(d + 'T00:00:00Z').toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }) : '-');
+const fmtFullDayDate = (d) => (d ? new Date(d + 'T00:00:00Z').toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' }) : '-');
+const fmtTs = (t) => (t ? new Date(t).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: TZ }) : '-');
+const fmtSubmit = (t) => (t ? new Date(t).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', timeZone: TZ }) : '-');
+const fmtTsDate = (t) => (t ? new Date(t).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', timeZone: TZ }) : '-');
+const toast = (icon, title) => Swal.fire({ toast: true, position: 'top-end', icon, title, showConfirmButton: false, timer: 2800, timerProgressBar: true });
+const ST = { Draft: 'st-draft', Submitted: 'st-sub', 'Approved GL': 'st-gl', Approved: 'st-app', Rejected: 'st-rej' };
+const badge = (s) => `<span class="badge-st ${ST[s] || ''}">${esc(s)}</span>`;
+
+/** Pembungkus fetch: cookie sesi, header anti-CSRF, penanganan error seragam. */
+async function api(url, o = {}) {
+  const opt = { credentials: 'same-origin', method: o.method || 'GET', headers: { 'X-Requested-With': 'fetch' } };
+  if ('json' in o) { opt.method = o.method || 'POST'; opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(o.json); }
+  else if (o.body) { opt.method = o.method || 'POST'; opt.body = o.body; }
+  const r = await fetch(url, opt);
+  const data = (r.headers.get('content-type') || '').includes('json') ? await r.json() : null;
+  if (!r.ok) {
+    if (r.status === 401 && S.user && !url.includes('/auth/')) { S.user = null; showLogin('Sesi berakhir, silakan login kembali.'); }
+    const e = new Error((data && data.error) || 'Terjadi kesalahan'); e.details = data && data.details; e.status = r.status; throw e;
+  }
+  return data;
+}
+function showError(e, title = 'Gagal') {
+  const list = e.details && e.details.length ? `<ul style="text-align:left;margin:8px 0 0 18px">${e.details.map((d) => `<li>${esc(d)}</li>`).join('')}</ul>` : '';
+  return Swal.fire({ icon: 'error', title, html: `<div>${esc(e.message)}</div>${list}`, confirmButtonColor: '#1E3A8A' });
+}
+
+/* =====================================================================
+   State & navigasi
+   ===================================================================== */
+const S = { user: null, meta: null, charts: {}, poll: null, unread: 0 };
+const MENUS = {
+  'Mekanik': [['dashboard', 'fa-table-columns', 'Dashboard TAR'], ['input', 'fa-pen-to-square', 'Input TAR'], ['my', 'fa-clipboard-list', 'My TAR'], ['skl-input', 'fa-clock', 'Input SKL']],
+  'Group Leader': [['dashboard', 'fa-table-columns', 'Dashboard TAR'], ['approval', 'fa-circle-check', 'Approval & Review'], ['search', 'fa-magnifying-glass', 'Search TAR'], ['skl-approval', 'fa-file-signature', 'Review & Approval SKL']],
+  'Super admin': [['dashboard', 'fa-table-columns', 'Dashboard TAR'], ['admin', 'fa-user-shield', 'Admin Panel'], ['search', 'fa-magnifying-glass', 'Search TAR'], ['skl-approval', 'fa-file-signature', 'Review & Approval SKL']],
+  'Admin': [['dashboard', 'fa-table-columns', 'Dashboard TAR'], ['admin', 'fa-user-shield', 'Admin Panel'], ['search', 'fa-magnifying-glass', 'Search TAR']],
+};
+const TITLES = {
+  dashboard: 'Dashboard TAR', input: 'Input Laporan TAR', my: 'My TAR', approval: 'Approval & Review Panel',
+  search: 'Search TAR', admin: 'Admin Panel', edit: 'Edit TAR (Admin)',
+  'skl-input': 'Input SKL', 'skl-approval': 'Review & Approval SKL',
+};
+
+function showLogin(msg) {
+  stopPoll(); closePopup(); S.popupShown = false;
+  $('#app').hidden = true; $('#login').hidden = false;
+  document.body.classList.remove('sb-open');
+  if (msg) toast('info', msg);
+  $('#lp').value = '';
+}
+async function startApp(user) {
+  S.user = user; S.popupShown = false;
+  S.meta = await api('/api/meta');
+  $('#login').hidden = true; $('#app').hidden = false;
+  $('#uName').textContent = user.nama_lengkap; $('#uRole').textContent = user.role + (user.jobsite ? ' · ' + user.jobsite : ''); renderAvatar();
+  $('#nav').innerHTML = MENUS[user.role].map(([k, ic, t]) => `<a href="#/${k}" data-k="${k}"><i class="fa-solid ${ic}"></i><span>${t}</span></a>`).join('');
+  if (innerWidth > 1024) document.body.classList.remove('collapsed');
+  startPoll();
+  router();
+}
+function router() {
+  if (!S.user) return;
+  const [name, arg] = (location.hash.replace(/^#\//, '') || 'dashboard').split('/');
+  const allowed = MENUS[S.user.role].map((m) => m[0]);
+  if (['Super admin', 'Admin'].includes(S.user.role)) allowed.push('edit');
+  const key = allowed.includes(name) ? name : 'dashboard';
+  if (key !== name) { location.hash = '#/dashboard'; return; }
+  document.body.classList.remove('sb-open');
+  $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.k === (key === 'edit' ? 'admin' : key)));
+  $('#pageTitle').textContent = TITLES[key];
+  Object.values(S.charts).forEach((c) => c && c.destroy()); S.charts = {};
+  const pages = {
+    dashboard: pageDashboard, input: pageInput, my: pageMy, approval: pageApproval, search: pageSearch, admin: pageAdmin,
+    edit: (id) => pageInput(id, true), 'skl-input': pageSklInput, 'skl-approval': pageSklApproval,
+  };
+  $('#view').innerHTML = '<div class="empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat…</div>';
+  Promise.resolve(pages[key](arg)).catch((e) => { $('#view').innerHTML = `<div class="empty">${esc(e.message)}</div>`; });
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', router);
+
+/* =====================================================================
+   Tabel generik dengan filter per kolom + pencarian cepat
+   cols: {label, text(row,i)->string utk filter, render(row,i)->html, filter:'text'|'select'|false, options:[...]}
+   ===================================================================== */
+function dataTable(host, cols, rows, opt = {}) {
+  const fv = {}; let quick = '';
+  const root = document.createElement('div'); host.replaceChildren(root);
+  root.innerHTML = `
+    <div class="tbl-tools"><input class="inp qs" placeholder="Cari cepat di semua kolom…" aria-label="Cari cepat"></div>
+    <div class="tbl-wrap"><table class="tbl"><thead>
+      <tr>${cols.map((c) => `<th>${c.label}</th>`).join('')}</tr>
+      <tr class="frow">${cols.map((c, i) => `<th>${c.filter === 'select'
+        ? `<select data-f="${i}"><option value="">Semua</option>${c.options.map((o) => `<option>${esc(o)}</option>`).join('')}</select>`
+        : c.filter ? `<input data-f="${i}" placeholder="Filter…">` : ''}</th>`).join('')}</tr>
+    </thead><tbody></tbody></table></div><div class="tbl-foot"></div>`;
+  const tb = $('tbody', root), foot = $('.tbl-foot', root);
+  const draw = () => {
+    const q = quick.toLowerCase();
+    const shown = rows.filter((r, ri) => cols.every((c, i) => {
+      const v = (fv[i] || '').toLowerCase();
+      if (!v || !c.filter) return true;
+      const t = String(c.text(r, ri)).toLowerCase();
+      return c.filter === 'select' ? t === v : t.includes(v);
+    }) && (!q || cols.some((c) => c.text && String(c.text(r)).toLowerCase().includes(q))));
+    tb.innerHTML = shown.length
+      ? shown.map((r, i) => `<tr>${cols.map((c) => `<td data-label="${esc(c.mobile || c.label.replace(/<[^>]+>/g, ''))}" class="${c.cls || ''}">${c.render(r, i)}</td>`).join('')}</tr>`).join('')
+      : `<tr><td colspan="${cols.length}" class="empty">${opt.empty || 'Tidak ada data'}</td></tr>`;
+    foot.textContent = `${shown.length} dari ${rows.length} laporan`;
+  };
+  root.addEventListener('input', (e) => {
+    if (e.target.matches('.qs')) quick = e.target.value;
+    else if (e.target.dataset.f != null) fv[e.target.dataset.f] = e.target.value.trim();
+    else return;
+    draw();
+  });
+  root.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (b) opt.onAction && opt.onAction(b.dataset.act, b.dataset.id);
+  });
+  draw();
+}
+const actBtn = (act, id, icon, title, cls = '') => `<button class="btn-ico ${cls}" data-act="${act}" data-id="${id}" title="${title}" aria-label="${title}"><i class="fa-solid ${icon}"></i></button>`;
+/** Nama owner + foto profil bulat kecil di sebelah kirinya. */
+const ownerCell = (r) => `<span class="own">${r.owner_avatar_url ? `<img class="ava" src="${esc(r.owner_avatar_url)}" alt="" loading="lazy">` : '<span class="ava"><i class="fa-solid fa-user"></i></span>'}${esc(r.owner_name)}</span>`;
+const scoreCell = (r) => (r.nilai_avg != null ? `<b>${r.nilai_avg}</b>${r.nilai_kronologis != null ? ` <small class="muted">(${r.nilai_kronologis}/${r.nilai_rootcause}/${r.nilai_action})</small>` : ''}` : '-');
+
+/** Kolom standar dashboard & search (Nilai hanya Group Leader/Super admin). */
+function reportCols({ withNo = true, withTar = false } = {}) {
+  const c = [];
+  if (withNo) c.push({ label: 'No', text: (r, i) => i + 1, render: (r, i) => i + 1, filter: false, cls: 'c' });
+  c.push({ label: 'Tanggal', text: (r) => fmtSubmit(r.submitted_at), render: (r) => fmtSubmit(r.submitted_at), filter: 'text' });
+  if (withTar) c.push({ label: 'No TAR', text: (r) => r.tar_number, render: (r) => `<span style="white-space:nowrap">${esc(r.tar_number)}</span>`, filter: 'text' });
+  c.push(
+    { label: 'Code Unit', text: (r) => r.code_unit || '', render: (r) => esc(r.code_unit || '-'), filter: 'text' },
+    { label: 'Judul TAR', text: (r) => r.judul || '', render: (r) => esc(r.judul || '-'), filter: 'text' },
+    { label: 'Komponen Terdampak', mobile: 'Komponen', text: (r) => r.komponen || '', render: (r) => esc(r.komponen || '-'), filter: 'text' },
+    { label: 'Owner', text: (r) => r.owner_name, render: ownerCell, filter: 'text' },
+    { label: 'Jobsite', text: (r) => r.jobsite || '', render: (r) => esc(r.jobsite || '-'), filter: 'select', options: S.meta.jobsites || [] },
+    { label: 'Approval', text: (r) => r.status, render: (r) => badge(r.status), filter: 'select', options: ['Draft', 'Submitted', 'Approved', 'Rejected'] },
+    { label: 'View', text: () => '', render: (r) => actBtn('view', r.id, 'fa-eye', 'Lihat detail'), filter: false, cls: 'c' });
+  c.push({ label: 'Nilai', text: (r) => (r.nilai_avg != null ? r.nilai_avg : ''), render: scoreCell, filter: 'text' });
+  return c;
+}
+
+/* =====================================================================
+   Halaman: Dashboard
+   ===================================================================== */
+const PALETTE = ['#1E3A8A', '#2563EB', '#60A5FA', '#0EA5E9', '#14B8A6', '#059669', '#D97706', '#DC2626', '#7C3AED', '#64748B'];
+async function pageDashboard() {
+  maybePopup();
+  $('#view').innerHTML = `
+    <div class="kpis" id="kpis"></div>
+    <div class="card">
+      <div class="toolbar"><span class="pill-title">List TAR</span><span class="grow"></span>
+        <label class="fl" style="margin:0" for="dm">Sortir by Month</label>
+        <input type="month" class="inp" id="dm" style="width:auto">
+        <button class="btn ghost sm" id="dmClear">Semua bulan</button>
+        <button class="btn ghost sm" data-exp="csv"><i class="fa-solid fa-file-csv"></i> CSV</button>
+        <button class="btn ghost sm" data-exp="xlsx"><i class="fa-solid fa-file-excel"></i> Excel</button>
+      </div>
+      <div id="dtbl"></div>
+    </div>
+    <div class="charts">
+      <div class="card"><h2>Distribusi kerusakan by Model Unit</h2><div class="chart-box"><canvas id="c1"></canvas></div></div>
+      <div class="card"><h2>Frekuensi kerusakan by Komponen</h2><div class="chart-box"><canvas id="c2"></canvas></div></div>
+    </div>`;
+  const month = () => $('#dm').value;
+  const load = async () => {
+    const m = month(), q = '?scope=all' + (m ? '&month=' + m : '');
+    const [list, dash] = await Promise.all([api('/api/reports' + q), api('/api/dashboard' + q)]);
+    dataTable($('#dtbl'), reportCols(), list.rows, { onAction: (a, id) => a === 'view' && openDetail(id), empty: 'Belum ada laporan pada periode ini' });
+    const k = dash.kpi;
+    $('#kpis').innerHTML = [['Total', k.Draft + k.Submitted + k.Approved + k.Rejected, ''], ['Submitted', k.Submitted, 'sub'], ['Approved', k.Approved, 'app'], ['Rejected', k.Rejected, 'rej']]
+      .map(([l, n, c]) => `<div class="kpi ${c}"><small>${l}</small><b>${n}</b></div>`).join('');
+    drawCharts(dash);
+  };
+  $('#dm').addEventListener('change', () => load().catch(showError));
+  $('#dmClear').addEventListener('click', () => { $('#dm').value = ''; load().catch(showError); });
+  $$('[data-exp]').forEach((b) => b.addEventListener('click', () => { const m = month(); location.href = `/api/export?format=${b.dataset.exp}&scope=all${m ? '&month=' + m : ''}`; }));
+  await load();
+}
+function drawCharts(d) {
+  if (typeof Chart === 'undefined') { setTimeout(() => { if ($('#c1')) drawCharts(d); }, 250); return; } // Chart.js dimuat defer
+  Object.values(S.charts).forEach((c) => c && c.destroy());
+  const empty = (id) => { const cv = $(id); cv.parentElement.innerHTML = '<div class="empty">Belum ada data untuk ditampilkan</div>'; };
+  if (!$('#c1')) return;
+  if (!d.by_model.length) { empty('#c1'); empty('#c2'); return; }
+  S.charts.c1 = new Chart($('#c1'), {
+    type: 'doughnut',
+    data: { labels: d.by_model.map((x) => x.label), datasets: [{ data: d.by_model.map((x) => x.value), backgroundColor: d.by_model.map((_, i) => PALETTE[i % PALETTE.length]), borderWidth: 2, borderColor: '#fff' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } } },
+  });
+  S.charts.c2 = new Chart($('#c2'), {
+    type: 'bar',
+    data: { labels: d.by_komponen.map((x) => x.label), datasets: [{ label: 'Jumlah TAR', data: d.by_komponen.map((x) => x.value), backgroundColor: '#2563EB', borderRadius: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { ticks: { font: { size: 11 } } } } },
+  });
+}
+
+/* =====================================================================
+   Halaman: Input / edit TAR (Mekanik)
+   ===================================================================== */
+let FORM = null;
+async function pageInput(id, adminMode = false) {
+  let rep = null, photos = [];
+  if (id) {
+    const d = await api('/api/reports/' + id);
+    if (!d.report.can.edit) { toast('warning', 'Laporan ini tidak dapat diedit'); location.hash = adminMode ? '#/admin' : '#/my'; return; }
+    rep = d.report; photos = d.photos;
+  }
+  FORM = { id: rep ? rep.id : null, existing: photos.map((p) => ({ ...p, caption: p.caption || '', orig: p.caption || '' })), pending: [], admin: adminMode, status: rep ? rep.status : '' };
+  const m = S.meta, v = (k) => esc(rep && rep[k] != null ? rep[k] : '');
+  const js = rep ? rep.jobsite : S.user.jobsite; // unit & Group Leader dibatasi jobsite (server juga memvalidasi)
+  const units = m.units.filter((u) => !js || u.jobsite === js);
+  const leaders = m.leaders.filter((l) => !js || l.jobsite === js);
+  if (rep && rep.leader_id && !leaders.some((l) => l.id === rep.leader_id)) leaders.push({ id: rep.leader_id, nama_lengkap: (rep.leader_name || '?') + ' (nonaktif)' });
+  const lockLeader = !adminMode && rep && rep.status === 'Rejected';
+  $('#view').innerHTML = `
+    ${rep && rep.status === 'Rejected' ? `<div class="banner"><b><i class="fa-solid fa-triangle-exclamation"></i> Perlu revisi.</b> Catatan Group Leader: ${esc(rep.catatan_review || '-')}</div>` : ''}
+    ${!js ? '<div class="banner"><b>Akun Anda belum memiliki jobsite.</b> Hubungi Super admin agar daftar unit dan Group Leader dapat ditampilkan.</div>' : ''}
+    <p class="muted">${rep ? `No TAR: <b>${esc(rep.tar_number)}</b> · Status: ${badge(rep.status)} · ` : ''}Jobsite: <b>${esc(js || '-')}</b></p>
+    <div class="card fsec">
+      <h2><i class="fa-solid fa-truck-monster"></i> 1. Data Unit &amp; Operasional</h2>
+      <div class="grid5">
+        <div><label class="fl" for="f_code">Code Unit</label><select class="inp" id="f_code"><option value="">-- pilih --</option>
+          ${units.map((u) => `<option value="${esc(u.code_unit)}" ${rep && rep.code_unit === u.code_unit ? 'selected' : ''}>${esc(u.code_unit)} — ${esc(u.merk_unit)} ${esc(u.model_unit)}</option>`).join('')}</select>
+          <div class="unit-info" id="unitInfo"></div></div>
+        <div><label class="fl" for="f_hm">HM Unit</label><input class="inp" id="f_hm" type="number" min="0.1" step="0.1" inputmode="decimal" value="${v('hm_unit')}"></div>
+        <div><label class="fl" for="f_tgl">Tanggal Kejadian</label><input class="inp" id="f_tgl" type="date" max="${todayJkt()}" value="${v('tanggal_kejadian')}"></div>
+        <div><label class="fl" for="f_kmp">Komponen Terdampak</label><select class="inp" id="f_kmp"><option value="">-- pilih --</option>
+          ${m.components.map((c) => `<option ${rep && rep.komponen === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+        <div><label class="fl" for="f_wo">Nomer WO</label><input class="inp" id="f_wo" maxlength="60" value="${v('nomor_wo')}"></div>
+      </div>
+      <div class="field" style="margin-top:14px"><label class="fl" for="f_judul">Judul TAR</label><input class="inp" id="f_judul" maxlength="200" value="${v('judul')}"></div>
+    </div>
+    <div class="card fsec">
+      <h2><i class="fa-solid fa-circle-question"></i> 2. Problem &amp; Analisa</h2>
+      <div class="field"><label class="fl" for="f_kron">Kronologi &amp; Deskripsi Problem</label><textarea class="inp" id="f_kron" rows="5">${v('kronologi')}</textarea></div>
+      <div class="field"><label class="fl" for="f_ana">Analisa Problem</label><textarea class="inp" id="f_ana" rows="5">${v('analisa')}</textarea></div>
+    </div>
+    <div class="card fsec">
+      <h2><i class="fa-solid fa-lightbulb"></i> 3. Problem Solving</h2>
+      <div class="field"><label class="fl" for="f_tin">Tindakan Perbaikan &amp; Pencegahan</label><textarea class="inp" id="f_tin" rows="5">${v('tindakan')}</textarea></div>
+    </div>
+    <div class="card fsec">
+      <h2><i class="fa-solid fa-cloud-arrow-up"></i> 4. Foto Visual</h2>
+      <label class="dz" for="f_files"><i class="fa-solid fa-cloud-arrow-up"></i><span>Ketuk untuk memilih foto kerusakan</span><small class="muted">JPG / PNG / WEBP · maks 8 MB · maks 10 foto</small></label>
+      <input class="sr" id="f_files" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+      <div class="photos" id="photos"></div>
+    </div>
+    <div class="formbar">
+      <div class="gl"><label class="fl" for="f_gl">Group Leader</label><select class="inp" id="f_gl" ${lockLeader ? 'disabled' : ''}><option value="">-- pilih Group Leader --</option>
+        ${leaders.map((l) => `<option value="${l.id}" ${rep && rep.leader_id === l.id ? 'selected' : ''}>${esc(l.nama_lengkap)}</option>`).join('')}</select>
+        ${lockLeader ? '<small class="muted">Group Leader dikunci pada laporan revisi.</small>' : ''}</div>
+      <div class="acts">
+        ${adminMode ? `<a class="btn ghost" href="#/admin">Batal</a><button class="btn navy" id="btnSave"><i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan</button>`
+          : `<button class="btn ghost" id="btnDraft"><i class="fa-solid fa-floppy-disk"></i> Simpan Draft</button>
+        <button class="btn navy" id="btnSubmit"><i class="fa-solid fa-paper-plane"></i> Submit TAR</button>`}
+      </div>
+    </div>`;
+  const info = () => { const u = units.find((x) => x.code_unit === $('#f_code').value); $('#unitInfo').textContent = u ? `${u.merk_unit} · ${u.model_unit} · SN ${u.machine_sn || '-'}` : ''; };
+  $('#f_code').addEventListener('change', info); info();
+  $('#f_files').addEventListener('change', onPickFiles);
+  $('#photos').addEventListener('input', (e) => {
+    const i = e.target.dataset.i, k = e.target.dataset.k;
+    if (i != null) FORM[k][i].caption = e.target.value;
+  });
+  $('#photos').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-rm]'); if (b) removePhoto(b.dataset.k, Number(b.dataset.rm));
+    const im = e.target.closest('img[data-zoom]'); if (im) window.open(im.dataset.zoom, '_blank', 'noopener');
+  });
+  if (adminMode) $('#btnSave').addEventListener('click', () => saveReport(false));
+  else { $('#btnDraft').addEventListener('click', () => saveReport(false)); $('#btnSubmit').addEventListener('click', () => saveReport(true)); }
+  renderPhotos();
+}
+/** Perkecil foto besar di browser agar upload cepat (mobile); server tetap memvalidasi isi file. */
+async function shrink(file) {
+  try {
+    const bmp = await createImageBitmap(file);
+    const sc = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    if (sc === 1 && file.size < 500 * 1024) return file;
+    const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * sc); cv.height = Math.round(bmp.height * sc);
+    cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+    const blob = await new Promise((r) => cv.toBlob(r, 'image/jpeg', 0.82));
+    return blob && blob.size < file.size ? new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }) : file;
+  } catch { return file; }
+}
+async function onPickFiles(e) {
+  const files = [...e.target.files]; e.target.value = '';
+  for (const f of files) {
+    if (FORM.existing.length + FORM.pending.length >= 10) { toast('warning', 'Maksimal 10 foto'); break; }
+    if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { toast('error', `${f.name}: format harus JPG/PNG/WEBP`); continue; }
+    const small = await shrink(f);
+    if (small.size > 8 * 1048576) { toast('error', `${f.name}: lebih dari 8 MB`); continue; }
+    FORM.pending.push({ file: small, caption: '', url: URL.createObjectURL(small) });
+  }
+  renderPhotos();
+}
+function removePhoto(kind, i) {
+  if (kind === 'pending') { URL.revokeObjectURL(FORM.pending[i].url); FORM.pending.splice(i, 1); renderPhotos(); return; }
+  const p = FORM.existing[i];
+  Swal.fire({ title: 'Hapus foto ini?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Hapus', cancelButtonText: 'Batal', confirmButtonColor: '#DC2626' })
+    .then(async (r) => {
+      if (!r.isConfirmed) return;
+      try { await api('/api/photos/' + p.id, { method: 'DELETE' }); FORM.existing.splice(i, 1); renderPhotos(); } catch (er) { showError(er); }
+    });
+}
+function renderPhotos() {
+  const card = (p, i, k, src, remote) => `<div class="ph"><img src="${esc(remote ? src + '?s=thumb' : src)}" alt="Foto ${i + 1}" loading="lazy" ${remote ? `data-zoom="${esc(src)}"` : ''}>
+    <div class="b"><input data-i="${i}" data-k="${k}" maxlength="200" placeholder="Caption foto" value="${esc(p.caption)}" aria-label="Caption">
+    <button class="btn-ico del" data-rm="${i}" data-k="${k}" title="Hapus foto" aria-label="Hapus foto"><i class="fa-solid fa-trash"></i></button></div></div>`;
+  $('#photos').innerHTML = FORM.existing.map((p, i) => card(p, i, 'existing', p.url, true)).join('') + FORM.pending.map((p, i) => card(p, i, 'pending', p.url, false)).join('');
+}
+const val = (id) => $(id).value.trim();
+function collectForm() {
+  return { code_unit: val('#f_code'), hm_unit: val('#f_hm'), tanggal_kejadian: val('#f_tgl'), komponen: val('#f_kmp'), nomor_wo: val('#f_wo'),
+    judul: val('#f_judul'), kronologi: val('#f_kron'), analisa: val('#f_ana'), tindakan: val('#f_tin'), leader_id: val('#f_gl') };
+}
+function clientValidate(b, strict) {
+  const e = [];
+  if (!b.judul) e.push('Judul TAR wajib diisi');
+  if (b.hm_unit && !(Number(b.hm_unit) > 0)) e.push('HM unit harus angka positif');
+  if (strict) {
+    [['code_unit', 'Code unit'], ['hm_unit', 'HM unit'], ['tanggal_kejadian', 'Tanggal kejadian'], ['komponen', 'Komponen terdampak'], ['nomor_wo', 'Nomer WO'],
+      ['kronologi', 'Kronologi & deskripsi problem'], ['analisa', 'Analisa problem'], ['tindakan', 'Tindakan perbaikan & pencegahan'], ['leader_id', 'Group Leader tujuan']]
+      .forEach(([k, l]) => { if (!b[k]) e.push(`${l} wajib diisi`); });
+    if (FORM.existing.length + FORM.pending.length < 1) e.push('Minimal 1 foto kerusakan wajib diunggah');
+  }
+  return e;
+}
+/** Simpan draft atau submit: simpan data → unggah foto → (opsional) submit. */
+async function saveReport(submit) {
+  const body = collectForm(), strictAdmin = FORM.admin && FORM.status !== 'Draft', errs = clientValidate(body, submit || strictAdmin);
+  if (errs.length) return showError({ message: 'Lengkapi data berikut:', details: errs }, 'Form belum lengkap');
+  if (submit) {
+    const r = await Swal.fire({ title: 'Submit TAR?', text: 'Laporan dikirim ke Group Leader dan tidak dapat diubah sampai direview.', icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, submit', cancelButtonText: 'Batal', confirmButtonColor: '#1E3A8A' });
+    if (!r.isConfirmed) return;
+  }
+  if (FORM.admin && FORM.status !== 'Draft') {
+    const r = await Swal.fire({ title: 'Simpan perubahan?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya, simpan', cancelButtonText: 'Batal', confirmButtonColor: '#1E3A8A',
+      text: FORM.status === 'Approved' ? 'TAR ini sudah Approved. Mengubah isinya membuat QR tanda tangan pada dokumen yang sudah dicetak menjadi tidak valid.' : 'Perubahan dicatat di audit trail dan pemilik TAR akan diberi notifikasi.' });
+    if (!r.isConfirmed) return;
+  }
+  const btns = $$('#btnDraft,#btnSubmit,#btnSave'); btns.forEach((b) => (b.disabled = true));
+  try {
+    let id = FORM.id;
+    if (id) await api((FORM.admin ? '/api/admin/reports/' : '/api/reports/') + id, { method: 'PUT', json: body });
+    else { const r = await api('/api/reports', { json: body }); id = FORM.id = r.id; }
+    for (const p of FORM.existing) if (p.caption !== p.orig) { await api('/api/photos/' + p.id, { method: 'PATCH', json: { caption: p.caption } }); p.orig = p.caption; }
+    if (FORM.pending.length) {
+      const fd = new FormData();
+      FORM.pending.forEach((p) => { fd.append('files', p.file, p.file.name); fd.append('captions', p.caption || ''); });
+      const r = await api(`/api/reports/${id}/photos`, { method: 'POST', body: fd });
+      FORM.existing.push(...r.photos.map((p) => ({ ...p, caption: p.caption || '', orig: p.caption || '' })));
+      FORM.pending.forEach((p) => URL.revokeObjectURL(p.url)); FORM.pending = []; renderPhotos();
+    }
+    if (submit) await api(`/api/reports/${id}/submit`, { method: 'POST', json: {} });
+    toast('success', FORM.admin ? 'Perubahan TAR tersimpan' : submit ? 'TAR berhasil dikirim' : 'Draft tersimpan');
+    location.hash = FORM.admin ? '#/admin' : '#/my';
+  } catch (e) { showError(e, submit ? 'Gagal submit' : 'Gagal menyimpan'); }
+  finally { btns.forEach((b) => (b.disabled = false)); }
+}
+
+/* =====================================================================
+   Halaman: My TAR (Mekanik)
+   ===================================================================== */
+async function pageMy() {
+  $('#view').innerHTML = '<div class="card"><div class="toolbar"><span class="pill-title">TAR yang saya buat</span><span class="grow"></span><a class="btn sm" href="#/input"><i class="fa-solid fa-plus"></i> Input TAR baru</a></div><div id="dtbl"></div></div>';
+  const { rows } = await api('/api/reports');
+  const cols = [
+    { label: 'No', text: (r, i) => i + 1, render: (r, i) => i + 1, filter: false, cls: 'c' },
+    { label: 'Tanggal', text: (r) => fmtDate(r.tanggal_kejadian), render: (r) => fmtDate(r.tanggal_kejadian), filter: 'text' },
+    { label: 'No TAR', text: (r) => r.tar_number, render: (r) => `<span style="white-space:nowrap">${esc(r.tar_number)}</span>`, filter: 'text' },
+    { label: 'Code Unit', text: (r) => r.code_unit || '', render: (r) => esc(r.code_unit || '-'), filter: 'text' },
+    { label: 'Judul TAR', text: (r) => r.judul || '', render: (r) => esc(r.judul || '-'), filter: 'text' },
+    { label: 'Status', text: (r) => r.status, render: (r) => badge(r.status), filter: 'select', options: ['Draft', 'Submitted', 'Approved', 'Rejected'] },
+    { label: 'Aksi', text: () => '', filter: false, render: (r) => `<div style="display:flex;gap:6px;justify-content:flex-end">${actBtn('view', r.id, 'fa-eye', 'Lihat')}
+      ${['Draft', 'Rejected'].includes(r.status) ? actBtn('edit', r.id, 'fa-pen', r.status === 'Rejected' ? 'Revisi' : 'Edit') : ''}
+      ${r.status === 'Draft' ? actBtn('del', r.id, 'fa-trash', 'Hapus draft', 'del') : ''}</div>` },
+  ];
+  dataTable($('#dtbl'), cols, rows, {
+    empty: 'Belum ada TAR. Klik “Input TAR baru” untuk membuat.',
+    onAction: (a, id) => { if (a === 'view') openDetail(id); else if (a === 'edit') location.hash = '#/input/' + id; else if (a === 'del') deleteReport(id, pageMy); },
+  });
+}
+async function deleteReport(id, after) {
+  const r = await Swal.fire({ title: 'Hapus laporan ini?', text: 'Laporan beserta foto akan dihapus permanen.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Hapus', cancelButtonText: 'Batal', confirmButtonColor: '#DC2626' });
+  if (!r.isConfirmed) return;
+  try { await api('/api/reports/' + id, { method: 'DELETE' }); toast('success', 'Laporan dihapus'); closeModal(); after && after(); } catch (e) { showError(e); }
+}
+
+/* =====================================================================
+   Halaman: Approval & Review (Group Leader)
+   ===================================================================== */
+async function pageApproval() {
+  $('#view').innerHTML = `<div class="card"><div class="toolbar"><span class="pill-title">Menunggu review</span></div><div id="dtbl"></div></div>`;
+  const load = async () => {
+    const { rows } = await api('/api/reports?status=Submitted&for_me=1');
+    const cols = [
+      { label: 'No', text: (r, i) => i + 1, render: (r, i) => i + 1, filter: false, cls: 'c' },
+      { label: 'Tgl Submit', text: (r) => fmtTs(r.submitted_at), render: (r) => fmtTs(r.submitted_at), filter: 'text' },
+      { label: 'No TAR', text: (r) => r.tar_number, render: (r) => `<span style="white-space:nowrap">${esc(r.tar_number)}</span>`, filter: 'text' },
+      { label: 'Code Unit', text: (r) => r.code_unit || '', render: (r) => esc(r.code_unit), filter: 'text' },
+      { label: 'Judul TAR', text: (r) => r.judul || '', render: (r) => esc(r.judul), filter: 'text' },
+      { label: 'Owner', text: (r) => r.owner_name, render: (r) => esc(r.owner_name), filter: 'text' },
+      { label: 'Review', text: () => '', filter: false, cls: 'c', render: (r) => `<button class="btn sm" data-act="view" data-id="${r.id}"><i class="fa-solid fa-clipboard-check"></i> Review</button>` },
+    ];
+    if (S.meta.sim && S.meta.sim.enabled) cols.splice(cols.length - 1, 0, { label: 'Kemiripan', text: (r) => (r.sim_score != null ? r.sim_score : ''), render: simBadge, filter: 'text' });
+    dataTable($('#dtbl'), cols, rows, { empty: 'Tidak ada laporan yang menunggu review 🎉', onAction: (a, id) => openDetail(id, load) });
+  };
+  await load();
+}
+
+/* =====================================================================
+   Halaman: Search TAR (Group Leader & Super admin)
+   ===================================================================== */
+/** Unduh semua TAR sesuai filter: 1 TAR = PDF, 2+ TAR = ZIP berisi PDF per TAR. */
+async function downloadPdf(params) {
+  const r = await Swal.fire({ title: 'Download TAR (PDF)', icon: 'question', showDenyButton: true, showCancelButton: true,
+    html: '<p style="margin:0">TAR yang sesuai filter pada tabel akan diunduh. Satu TAR berupa file PDF; dua atau lebih dikemas dalam satu file ZIP.<br><br>Sertakan nilai penilaian?</p>',
+    confirmButtonText: 'Dengan nilai', denyButtonText: 'Tanpa nilai', cancelButtonText: 'Batal', confirmButtonColor: '#1E3A8A', denyButtonColor: '#2563EB' });
+  if (!r.isConfirmed && !r.isDenied) return;
+  Swal.fire({ title: 'Menyiapkan file…', html: 'Mohon tunggu dan jangan tutup halaman ini.', allowOutsideClick: false, allowEscapeKey: false, didOpen: () => Swal.showLoading() });
+  try {
+    const resp = await fetch(`/api/export/pdf?${params}&scores=${r.isConfirmed ? 1 : 0}`, { credentials: 'same-origin', headers: { 'X-Requested-With': 'fetch' } });
+    if (!resp.ok) {
+      let msg = 'Gagal membuat file';
+      try { msg = (await resp.json()).error || msg; } catch { /* bukan JSON */ }
+      throw new Error(msg);
+    }
+    const blob = await resp.blob();
+    const m = (resp.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = m ? m[1] : 'TAR-export.zip';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    Swal.close(); toast('success', 'File berhasil diunduh');
+  } catch (e) { showError(e, 'Download gagal'); }
+}
+async function pageSearch() {
+  $('#view').innerHTML = `<div class="card"><div class="toolbar">
+      <input class="inp" id="sq" style="flex:1;min-width:220px" placeholder="Cari Code unit, model unit, nama mekanik, status, judul…">
+      <select class="inp" id="ss" style="width:auto"><option value="">Semua status</option><option>Draft</option><option>Submitted</option><option>Approved</option><option>Rejected</option></select>
+      <input type="month" class="inp" id="sm" style="width:auto">
+      <button class="btn ghost sm" data-exp="csv"><i class="fa-solid fa-file-csv"></i> CSV</button>
+      <button class="btn ghost sm" data-exp="xlsx"><i class="fa-solid fa-file-excel"></i> Excel</button>
+      <button class="btn ghost sm" id="dlPdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button></div><div id="dtbl"></div></div>`;
+  const qs = () => new URLSearchParams({ q: $('#sq').value.trim(), status: $('#ss').value, month: $('#sm').value }).toString();
+  let timer;
+  const load = async () => {
+    const { rows } = await api('/api/reports?' + qs());
+    dataTable($('#dtbl'), reportCols({ withTar: true }), rows, { onAction: (a, id) => a === 'view' && openDetail(id, load) });
+  };
+  const later = () => { clearTimeout(timer); timer = setTimeout(() => load().catch(showError), 300); };
+  ['#sq', '#ss', '#sm'].forEach((s) => $(s).addEventListener('input', later));
+  $$('[data-exp]').forEach((b) => b.addEventListener('click', () => (location.href = `/api/export?format=${b.dataset.exp}&${qs()}`)));
+  $('#dlPdf').onclick = () => downloadPdf(qs());
+  await load();
+}
+
+/* =====================================================================
+   Detail laporan (modal) + keputusan approve/reject + cetak
+   ===================================================================== */
+const modalEl = $('#modal');
+function closeModal() { modalEl.hidden = true; $('#modalBody').innerHTML = ''; }
+$('#modalX').addEventListener('click', closeModal);
+modalEl.addEventListener('mousedown', (e) => { if (e.target === modalEl) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !document.querySelector('.swal2-container')) closeModal(); });
+
+async function openDetail(id, onChange) {
+  try {
+    const d = await api('/api/reports/' + id);
+    const r = d.report, scoreVisible = r.status === 'Approved' && r.nilai_avg != null;
+    $('#modalBody').innerHTML = `
+      <div class="dh"><h2>${esc(r.tar_number)}</h2><div>${badge(r.status)} <span class="muted">· ${esc(r.judul || '-')}</span></div></div>
+      <div class="db">
+        <div class="kv">
+          <div><small>Jobsite</small>${esc(r.jobsite || '-')}</div><div><small>Code Unit</small>${esc(r.code_unit || '-')}</div><div><small>Merk / Model</small>${esc(r.merk_unit || '-')} ${esc(r.model_unit || '')}</div>
+          <div><small>Machine SN</small>${esc(r.machine_sn || '-')}</div><div><small>HM Unit</small>${r.hm_unit != null ? esc(r.hm_unit) : '-'}</div>
+          <div><small>Tanggal Kejadian</small>${fmtDate(r.tanggal_kejadian)}</div><div><small>Komponen Terdampak</small>${esc(r.komponen || '-')}</div>
+          <div><small>Nomer WO</small>${esc(r.nomor_wo || '-')}</div><div><small>Mekanik (Owner)</small>${esc(r.owner_name)} (${esc(r.owner_nrp)})</div>
+          <div><small>Group Leader tujuan</small>${esc(r.leader_name || '-')}</div>
+          <div><small>Tanggal Submit</small>${fmtTs(r.submitted_at)}</div><div><small>Tanggal Keputusan</small>${fmtTs(r.decided_at)}</div></div>
+        <div class="sect"><h3>Kronologi &amp; Deskripsi Problem</h3><div class="tx">${esc(r.kronologi || '-')}</div></div>
+        <div class="sect"><h3>Analisa Problem</h3><div class="tx">${esc(r.analisa || '-')}</div></div>
+        <div class="sect"><h3>Tindakan Perbaikan &amp; Pencegahan</h3><div class="tx">${esc(r.tindakan || '-')}</div></div>
+        ${d.photos.length ? `<div class="sect"><h3>Foto Penunjang</h3><div class="photos">${d.photos.map((p) => `<div class="ph"><a href="${esc(p.url)}" target="_blank" rel="noopener"><img src="${esc(p.url)}?s=thumb" alt="" loading="lazy"></a><div class="b"><small>${esc(p.caption || '')}</small></div></div>`).join('')}</div></div>` : ''}
+        ${r.catatan_review ? `<div class="sect"><h3>Catatan Group Leader${r.decided_by_name ? ' — ' + esc(r.decided_by_name) : ''}</h3><div class="tx">${esc(r.catatan_review)}</div></div>` : ''}
+        ${scoreVisible ? `<div class="sect"><h3>Penilaian</h3><div class="scorebox">${r.nilai_kronologis != null ? `<div><small>Kronologis</small><b>${r.nilai_kronologis}</b></div><div><small>Root cause</small><b>${r.nilai_rootcause}</b></div><div><small>Action / solusi</small><b>${r.nilai_action}</b></div>` : ''}<div><small>Rata-rata</small><b>${r.nilai_avg}</b></div></div></div>` : ''}
+        ${S.user.role !== 'Mekanik' && S.meta.sim && S.meta.sim.enabled && r.status !== 'Draft' ? '<div class="sect" id="simBox"></div>' : ''}
+        <div class="sect"><h3>Audit Trail</h3><ul class="log">${d.log.map((l) => `<li><b>${esc(l.action_taken)}</b> — ${esc(l.actor_name || l.actor_user)} <small>· ${fmtTs(l.ts)}</small>${l.catatan ? `<br><small>${esc(l.catatan)}</small>` : ''}</li>`).join('') || '<li class="muted">Belum ada riwayat</li>'}</ul></div>
+      </div>
+      <div class="da">
+        ${r.can.review ? '<button class="btn green" id="dAppr"><i class="fa-solid fa-circle-check"></i> Approve</button><button class="btn red" id="dRej"><i class="fa-solid fa-circle-xmark"></i> Reject</button>' : ''}
+        ${r.can.edit ? `<button class="btn" id="dEdit"><i class="fa-solid fa-pen"></i> ${r.status === 'Rejected' && S.user.role === 'Mekanik' ? 'Revisi' : 'Edit'}</button>` : ''}
+        <button class="btn ghost" id="dPrint"><i class="fa-solid fa-print"></i> Cetak A4</button>
+        ${r.can.delete ? '<button class="btn ghost" id="dDel" style="color:var(--rej)"><i class="fa-solid fa-trash"></i> Hapus</button>' : ''}
+      </div>`;
+    modalEl.hidden = false; modalEl.scrollTop = 0;
+    if ($('#simBox')) loadSimilarity(r.id, false);
+    const done = () => { closeModal(); onChange ? onChange() : router(); };
+    $('#dPrint').onclick = () => choosePrint(d);
+    if ($('#dEdit')) $('#dEdit').onclick = () => { closeModal(); location.hash = (['Super admin', 'Admin'].includes(S.user.role) ? '#/edit/' : '#/input/') + r.id; };
+    if ($('#dDel')) $('#dDel').onclick = () => deleteReport(r.id, onChange || router);
+    if ($('#dAppr')) $('#dAppr').onclick = () => decide(r, 'approve', done);
+    if ($('#dRej')) $('#dRej').onclick = () => decide(r, 'reject', done);
+  } catch (e) { showError(e); }
+}
+/** Dialog Approve (catatan + 3 nilai 0–100) / Reject (catatan wajib). */
+async function decide(r, action, done) {
+  const approve = action === 'approve';
+  const scoreIn = (id, l) => `<label for="${id}">${l} (0–100)</label><input id="${id}" class="swal2-input inp" type="number" min="0" max="100" step="1" inputmode="numeric">`;
+  const res = await Swal.fire({
+    title: approve ? 'Approve laporan' : 'Reject laporan', icon: approve ? 'question' : 'warning', showCancelButton: true, focusConfirm: false,
+    confirmButtonText: approve ? 'Approve' : 'Reject', cancelButtonText: 'Batal', confirmButtonColor: approve ? '#059669' : '#DC2626',
+    html: `<div class="sw-form">${approve ? scoreIn('sc1', 'a. Penjabaran kronologis') + scoreIn('sc2', 'b. Analisa akar masalah / root cause') + scoreIn('sc3', 'c. Pemilihan action / solusi') : ''}
+      <label for="scn">${approve ? 'Catatan verifikasi' : 'Alasan penolakan (wajib)'}</label><textarea id="scn" class="swal2-textarea inp" rows="4" maxlength="5000" style="margin:0;width:100%"></textarea></div>`,
+    preConfirm: () => {
+      const out = { action, catatan: $('#scn').value.trim() };
+      if (!out.catatan) return Swal.showValidationMessage(approve ? 'Catatan wajib diisi' : 'Alasan penolakan wajib diisi');
+      if (approve) {
+        for (const [k, id] of [['nilai_kronologis', 'sc1'], ['nilai_rootcause', 'sc2'], ['nilai_action', 'sc3']]) {
+          const s = $('#' + id).value.trim();
+          if (!/^\d{1,3}$/.test(s) || Number(s) > 100) return Swal.showValidationMessage('Ketiga nilai harus bilangan bulat 0–100');
+          out[k] = Number(s);
+        }
+      }
+      return out;
+    },
+  });
+  if (!res.isConfirmed) return;
+  try { await api(`/api/reports/${r.id}/decision`, { json: res.value }); toast('success', approve ? 'Laporan disetujui' : 'Laporan ditolak'); done(); }
+  catch (e) { showError(e); }
+}
+
+/** Group Leader / Super admin memilih cetak dengan atau tanpa nilai; role lain selalu tanpa nilai. */
+async function choosePrint(d) {
+  if (S.user.role === 'Mekanik' || d.report.nilai_kronologis == null) return printReport(d, false);
+  const r = await Swal.fire({ title: 'Cetak TAR', text: 'Pilih format cetak:', icon: 'question', showDenyButton: true, showCancelButton: true,
+    confirmButtonText: 'Dengan nilai', denyButtonText: 'Tanpa nilai', cancelButtonText: 'Batal', confirmButtonColor: '#1E3A8A', denyButtonColor: '#2563EB' });
+  if (r.isConfirmed) printReport(d, true); else if (r.isDenied) printReport(d, false);
+}
+/** Cetak ringkasan TAR A4 sesuai sketsa Report_Cetak. Nilai penilaian sengaja TIDAK disertakan. */
+async function printReport(d, withScore = false) {
+  const r = d.report, approved = r.status === 'Approved';
+  const statusDate = fmtTsDate(r.decided_at || r.submitted_at || r.created_at);
+  const f = (l, v) => `<div class="pa-f"><b>${l}</b><div>${esc(v == null || v === '' ? '-' : v)}</div></div>`;
+  const blk = (l, v) => `<div class="pa-blk"><b>${l}</b><div class="tx">${esc(v || '-')}</div></div>`;
+  const sg = d.signatures || {};
+  const sign = (title, g, label, waitText) => `<div class="box"><b>${title}</b><div class="sig">${g
+    ? `<div class="qr">${g.svg}</div><div class="meta"><b style="font-size:10pt">${esc(g.name)}</b><small>NRP ${esc(g.nrp)}</small><small>${label}: ${fmtTs(g.ts)}</small><small class="vf">Scan QR untuk verifikasi keaslian</small></div>`
+    : `<div class="meta"><span class="esign wait">${esc(waitText)}</span><small>Status: ${esc(r.status)}</small></div>`}</div></div>`;
+  $('#printArea').innerHTML = `
+    <div class="pa-head"><img src="/logo.png" alt=""><div class="co"><b>PT. Harapan Mitra Lestari</b><span>Technical Analysis Report</span>${r.jobsite ? `<br><span class="pa-js">Jobsite ${esc(r.jobsite)}</span>` : ''}</div>
+      <div class="no"><div>${esc(r.tar_number)}</div><div>${statusDate}</div><div><span class="pa-st pa-st-${esc(r.status)}">${esc(r.status)}</span></div></div></div>
+    <div class="pa-unit"><div class="pa-g4">
+      ${f('Code Unit', r.code_unit)}${f('Merk Unit', r.merk_unit)}${f('Model Unit', r.model_unit)}${f('Machine SN', r.machine_sn)}
+      ${f('HM Unit', r.hm_unit)}${f('Tanggal Breakdown', fmtDate(r.tanggal_kejadian))}${f('Nomer WO', r.nomor_wo)}${f('Komponen', r.komponen)}
+    </div>${f('Judul TAR', r.judul).replace('class="pa-f"', 'class="pa-f full"')}</div>
+    ${blk('Deskripsi Problem', r.kronologi)}
+    ${blk('Analisa Problem', r.analisa)}
+    ${blk('Tindakan perbaikan & Pencegahan', r.tindakan)}
+    ${d.photos.length ? `<div class="pa-blk"><b>Foto Pendukung</b><div class="pa-photos">${d.photos.map((p) => `<div class="pa-ph"><img src="${esc(p.url)}" alt="">${p.caption ? `<div>${esc(p.caption)}</div>` : ''}</div>`).join('')}</div></div>` : ''}
+    ${withScore && r.nilai_kronologis != null ? `<div class="pa-blk"><b>Penilaian (internal)</b><div class="pa-g4">${f('Penjabaran Kronologis', r.nilai_kronologis)}${f('Analisa Akar Masalah', r.nilai_rootcause)}${f('Pemilihan Action / Solusi', r.nilai_action)}${f('Rata-rata', r.nilai_avg)}</div></div>` : ''}
+    <div class="pa-sec-line"></div>
+    <div class="pa-sign">
+      ${sign('Dibuat Oleh', sg.mekanik, 'Disubmit', 'BELUM DISUBMIT')}
+      ${sign('Disetujui oleh', sg.leader, 'Disetujui', 'BELUM DISETUJUI')}
+    </div>`;
+  let st = document.getElementById('pageFoot');
+  if (!st) { st = document.createElement('style'); st.id = 'pageFoot'; document.head.appendChild(st); }
+  const ft = `TAR System · PT Harapan Mitra Lestari · ${r.tar_number} · Dicetak oleh ${S.user.nama_lengkap}, ${fmtTs(new Date().toISOString())} · Dokumen sah dengan tanda tangan elektronik`.replace(/[\\"]/g, '\\$&');
+  st.textContent = `@page{@bottom-left{content:"${ft}";font-size:7pt;color:#555;width:80%;text-align:left;vertical-align:top}}`;
+  const imgs = $$('#printArea img');
+  await Promise.all(imgs.map((im) => (im.complete ? 1 : new Promise((ok) => { im.onload = im.onerror = ok; }))));
+  window.print();
+}
+
+/* =====================================================================
+   Halaman: Admin Panel (Super admin)
+   ===================================================================== */
+async function pageAdmin() {
+  // Super admin: semua tab. Admin: hanya Kelola TAR, Kelola Unit, Pop Up (tanpa Kelola User, Cek Kemiripan, Webhook).
+  const ALL = [['users', 'fa-users', 'Kelola User', ['Super admin'], adminUsers], ['reports', 'fa-file-pen', 'Kelola TAR', ['Super admin', 'Admin'], adminReports],
+    ['units', 'fa-truck-monster', 'Kelola Unit', ['Super admin', 'Admin'], adminUnits], ['ai', 'fa-robot', 'Cek Kemiripan', ['Super admin'], adminAI],
+    ['popup', 'fa-comment-dots', 'Pop Up', ['Super admin', 'Admin'], adminPopup], ['hooks', 'fa-bell', 'Webhook Notifikasi', ['Super admin'], adminHooks]]
+    .filter((t) => t[3].includes(S.user.role));
+  $('#view').innerHTML = `<div class="card"><div class="tabs" id="tabs">${ALL.map((t) => `<button data-t="${t[0]}"><i class="fa-solid ${t[1]}"></i> ${t[2]}</button>`).join('')}</div><div id="tab"></div></div>`;
+  const go = (t) => {
+    if (!ALL.some((x) => x[0] === t)) t = ALL[0][0];
+    S.adminTab = t; $$('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.t === t));
+    ALL.find((x) => x[0] === t)[4]().catch(showError);
+  };
+  $('#tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) go(b.dataset.t); });
+  go(S.adminTab || ALL[0][0]);
+}
+const userForm = (u = {}, creating) => `<div class="sw-form">
+  <label>Username (NRP)</label><input id="u_user" class="swal2-input inp" value="${esc(u.username || '')}" ${creating ? '' : 'disabled'} style="margin:0">
+  <label>Nama lengkap</label><input id="u_nama" class="swal2-input inp" value="${esc(u.nama_lengkap || '')}" style="margin:0">
+  <label>Role</label><select id="u_role" class="swal2-select inp" style="margin:0;width:100%">${['Mekanik', 'Group Leader', 'Admin', 'Super admin'].map((r) => `<option ${u.role === r ? 'selected' : ''}>${r}</option>`).join('')}</select>
+  <label>Jobsite (wajib untuk Mekanik / Group Leader)</label><select id="u_js" class="swal2-select inp" style="margin:0;width:100%"><option value="">— semua jobsite (Admin / Super admin) —</option>${(S.jobsites || []).map((j) => `<option ${u.jobsite === j ? 'selected' : ''}>${esc(j)}</option>`).join('')}</select>
+  <label>Email</label><input id="u_email" class="swal2-input inp" value="${esc(u.email || '')}" style="margin:0">
+  <label>No. WhatsApp</label><input id="u_wa" class="swal2-input inp" placeholder="62812xxxx" value="${esc(u.wa_number || '')}" style="margin:0">
+  ${creating ? '<label>Password awal (min 6)</label><input id="u_pw" type="text" class="swal2-input inp" style="margin:0" autocomplete="off">' : `<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="u_act" ${u.active !== false ? 'checked' : ''}> Akun aktif</label>`}</div>`;
+async function adminUsers() {
+  const ul = await api('/api/admin/users'); const rows = ul.rows; S.jobsites = ul.jobsites;
+  $('#tab').innerHTML = '<div class="toolbar"><span class="grow"></span><button class="btn" id="uAdd"><i class="fa-solid fa-user-plus"></i> Tambah user</button></div><div id="utbl"></div>';
+  const cols = [
+    { label: 'Nama', text: (r) => r.nama_lengkap, render: (r) => esc(r.nama_lengkap), filter: 'text' },
+    { label: 'Username', text: (r) => r.username, render: (r) => esc(r.username), filter: 'text' },
+    { label: 'Role', text: (r) => r.role, render: (r) => esc(r.role), filter: 'select', options: ['Mekanik', 'Group Leader', 'Admin', 'Super admin'] },
+    { label: 'Jobsite', text: (r) => r.jobsite || 'Semua', render: (r) => esc(r.jobsite || 'Semua'), filter: 'select', options: ['Semua', ...(S.jobsites || [])] },
+    { label: 'Email', text: (r) => r.email || '', render: (r) => esc(r.email || '-'), filter: 'text' },
+    { label: 'WA', text: (r) => r.wa_number || '', render: (r) => esc(r.wa_number || '-'), filter: 'text' },
+    { label: 'Status', text: (r) => (r.active ? 'Aktif' : 'Nonaktif'), render: (r) => (r.active ? '<span class="badge-st st-app">Aktif</span>' : '<span class="badge-st st-draft">Nonaktif</span>'), filter: 'select', options: ['Aktif', 'Nonaktif'] },
+    { label: 'Aksi', text: () => '', filter: false, render: (r) => `<div style="display:flex;gap:6px;justify-content:flex-end">${actBtn('edit', r.id, 'fa-pen', 'Edit user')}${actBtn('pw', r.id, 'fa-key', 'Reset password')}${actBtn('del', r.id, 'fa-trash', 'Hapus user', 'del')}</div>` },
+  ];
+  const byId = (id) => rows.find((r) => String(r.id) === String(id));
+  dataTable($('#utbl'), cols, rows, { empty: 'Belum ada user', onAction: async (a, id) => {
+    const u = byId(id);
+    try {
+      if (a === 'edit') {
+        const r = await Swal.fire({ title: 'Edit user', html: userForm(u, false), showCancelButton: true, confirmButtonText: 'Simpan', cancelButtonText: 'Batal', focusConfirm: false,
+          preConfirm: () => ({ nama_lengkap: $('#u_nama').value, role: $('#u_role').value, jobsite: $('#u_js').value, email: $('#u_email').value, wa_number: $('#u_wa').value, active: $('#u_act').checked }) });
+        if (r.isConfirmed) { await api('/api/admin/users/' + id, { method: 'PUT', json: r.value }); toast('success', 'User diperbarui'); adminUsers(); }
+      } else if (a === 'pw') {
+        const r = await Swal.fire({ title: 'Reset password', text: `${u.nama_lengkap} (${u.username})`, input: 'text', inputLabel: 'Password baru (min 6 karakter)', showCancelButton: true, confirmButtonText: 'Reset', cancelButtonText: 'Batal',
+          inputValidator: (v) => (!v || v.length < 6 ? 'Minimal 6 karakter' : undefined) });
+        if (r.isConfirmed) { await api(`/api/admin/users/${id}/reset-password`, { json: { password: r.value } }); toast('success', 'Password direset'); }
+      } else if (a === 'del') {
+        const r = await Swal.fire({ title: 'Hapus user?', text: `${u.nama_lengkap} (${u.username}) akan dihapus.`, icon: 'warning', showCancelButton: true, confirmButtonText: 'Hapus', cancelButtonText: 'Batal', confirmButtonColor: '#DC2626' });
+        if (r.isConfirmed) { await api('/api/admin/users/' + id, { method: 'DELETE' }); toast('success', 'User dihapus'); adminUsers(); }
+      }
+    } catch (e) { showError(e); }
+  } });
+  $('#uAdd').onclick = async () => {
+    const r = await Swal.fire({ title: 'Tambah user', html: userForm({}, true), showCancelButton: true, confirmButtonText: 'Buat', cancelButtonText: 'Batal', focusConfirm: false,
+      preConfirm: () => ({ username: $('#u_user').value, nama_lengkap: $('#u_nama').value, role: $('#u_role').value, jobsite: $('#u_js').value, email: $('#u_email').value, wa_number: $('#u_wa').value, password: $('#u_pw').value }) });
+    if (!r.isConfirmed) return;
+    try { await api('/api/admin/users', { json: r.value }); toast('success', 'User dibuat'); adminUsers(); } catch (e) { showError(e); }
+  };
+}
+async function adminReports() {
+  $('#tab').innerHTML = '<p class="muted">Cari laporan lalu edit isinya atau hapus. Semua perubahan dan penghapusan tercatat di audit trail; penghapusan bersifat permanen (foto ikut terhapus).</p><div id="rtbl"></div>';
+  const { rows } = await api('/api/reports');
+  const cols = reportCols({ withTar: true });
+  cols[cols.length - 2] = { label: 'Aksi', text: () => '', filter: false, cls: 'c', render: (r) => `<div style="display:flex;gap:6px;justify-content:flex-end">${actBtn('view', r.id, 'fa-eye', 'Lihat')}${actBtn('edit', r.id, 'fa-pen', 'Edit TAR')}${actBtn('del', r.id, 'fa-trash', 'Hapus TAR', 'del')}</div>` };
+  cols.pop(); // buang kolom Nilai (digantikan di tabel ini)
+  dataTable($('#rtbl'), cols, rows, { onAction: (a, id) => { if (a === 'view') openDetail(id, adminReports); else if (a === 'edit') location.hash = '#/edit/' + id; else deleteReport(id, adminReports); } });
+}
+async function adminPopup() {
+  const [d, ul] = await Promise.all([api('/api/popup'), api('/api/popup/users')]);
+  const users = ul.rows.filter((u) => u.active);
+  $('#tab').innerHTML = `<p class="muted">Pesan ini muncul sebagai pop up di Dashboard semua user, sekali setiap login atau reload halaman. Kamu juga bisa menampilkan foto dan nama seorang user (misalnya pengumuman "Best TAR").</p>
+    <div class="field"><label class="fl" for="pp_msg">Isi pesan (maks 1000 karakter)</label><textarea class="inp" id="pp_msg" rows="6" maxlength="1000" style="font-family:Roboto,Arial,sans-serif;font-size:16px">${esc(d.message)}</textarea></div>
+    <div class="field"><label class="fl" for="pp_user">Tampilkan foto user (opsional)</label><select class="inp" id="pp_user"><option value="">— tanpa foto —</option>
+      ${users.map((u) => `<option value="${u.id}" ${d.user_id === u.id ? 'selected' : ''}>${esc(u.nama_lengkap)} (${esc(u.username)})${u.avatar_url ? '' : ' — belum punya foto'}</option>`).join('')}</select></div>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:600;margin-bottom:14px"><input type="checkbox" id="pp_on" ${d.enabled ? 'checked' : ''}> Tampilkan pop up</label>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn ghost" id="pp_prev"><i class="fa-solid fa-eye"></i> Pratinjau</button><button class="btn navy" id="pp_save"><i class="fa-solid fa-floppy-disk"></i> Simpan</button></div>`;
+  const picked = () => { const u = users.find((x) => String(x.id) === $('#pp_user').value); return u ? { nama: u.nama_lengkap, avatar_url: u.avatar_url } : null; };
+  $('#pp_prev').onclick = () => { const m = $('#pp_msg').value.trim(); if (m) showPopup(m, picked()); else toast('warning', 'Isi pesan dahulu'); };
+  $('#pp_save').onclick = async () => {
+    try { await api('/api/admin/popup', { method: 'PUT', json: { message: $('#pp_msg').value, enabled: $('#pp_on').checked, user_id: $('#pp_user').value || null } }); toast('success', 'Pop up disimpan'); }
+    catch (e) { showError(e); }
+  };
+}
+/* =====================================================================
+   Cek kemiripan TAR (Group Leader & Super admin)
+   ===================================================================== */
+const simColor = (score, w, e) => (score >= e ? '#DC2626' : score >= w ? '#D97706' : '#059669');
+/** Badge kemiripan di tabel Approval & Review. */
+function simBadge(r) {
+  if (r.sim_score == null) return '<span class="muted">-</span>';
+  const cls = r.sim_level === 'exact' ? 'st-rej' : r.sim_level === 'warn' ? 'st-sub' : 'st-draft';
+  const txt = r.sim_level === 'exact' ? `Sama persis ${r.sim_score}%` : r.sim_level === 'warn' ? `Mirip ${r.sim_score}%` : `${r.sim_score}%`;
+  return `<span class="badge-st ${cls}">${txt}</span>`;
+}
+async function loadSimilarity(id, refresh) {
+  const box = $('#simBox'); if (!box) return;
+  box.innerHTML = '<h3>Cek Kemiripan</h3><div class="muted"><i class="fa-solid fa-spinner fa-spin"></i> Memeriksa kemiripan dengan TAR lain…</div>';
+  try {
+    const d = await api(`/api/reports/${id}/similarity${refresh ? '?refresh=1' : ''}`);
+    if (!d.enabled) { box.remove(); return; }
+    const lvl = d.level === 'exact' ? '<span class="badge-st st-rej">Ada yang sama persis</span>' : d.level === 'warn' ? '<span class="badge-st st-sub">Perlu dicek</span>' : '<span class="badge-st st-app">Tidak ada yang mirip</span>';
+    const row = (m) => `<div class="sim-row ${m.exact ? 'exact' : m.score >= d.warn ? 'warn' : ''}">
+      <div class="sim-top"><div><b>${esc(m.tar_number)}</b> ${m.exact ? '<span class="badge-st st-rej">Sama persis</span>' : ''} ${m.earlier === true ? '<span class="chip">TAR itu lebih dulu</span>' : m.earlier === false ? '<span class="chip">TAR ini lebih dulu</span>' : ''}
+        <div class="muted">${esc(m.owner_name)} · ${esc(m.jobsite || '-')} · ${esc(m.code_unit || '-')} · ${esc(m.komponen || '-')}</div><div>${esc(m.judul || '')}</div></div>
+        <b style="font-size:22px;color:${simColor(m.score, d.warn, d.exact)}">${m.score}%</b></div>
+      <div class="sim-bar"><i style="width:${m.score}%;background:${simColor(m.score, d.warn, d.exact)}"></i></div>
+      <span class="chip">Teks ${m.local.overall}%</span>${m.ai != null ? `<span class="chip">Makna (AI) ${m.ai}% · cos ${m.cos}</span>` : ''}
+      <span class="chip">Kronologi ${m.local.kron ?? '-'}%</span><span class="chip">Analisa ${m.local.ana ?? '-'}%</span><span class="chip">Tindakan ${m.local.tind ?? '-'}%</span>
+      <div class="sim-acts"><button class="btn ghost sm" data-sim="cmp" data-oid="${m.id}"><i class="fa-solid fa-code-compare"></i> Bandingkan</button>
+        ${d.chat_ready ? `<button class="btn ghost sm" data-sim="exp" data-oid="${m.id}"><i class="fa-solid fa-wand-magic-sparkles"></i> Jelaskan (AI)</button>` : ''}</div></div>`;
+    box.innerHTML = `<div class="sim-head"><h3 style="margin:0">Cek Kemiripan</h3>${lvl}<span class="grow" style="flex:1"></span>
+        <button class="btn ghost sm" data-sim="refresh"><i class="fa-solid fa-rotate"></i> Periksa ulang</button></div>
+      ${d.matches.length ? d.matches.map(row).join('') : '<div class="muted">Tidak ditemukan TAR lain dengan kemiripan 30% ke atas.</div>'}
+      <div class="sim-note">Dasar penilaian: kemiripan teks (salin-tempel) ${d.used_ai ? '+ kemiripan makna oleh AI' : '(AI tidak dipakai)'} · diperiksa ${fmtTs(d.checked_at)}.
+        Persentase hanyalah indikasi, bukan bukti plagiat: kerusakan sejenis wajar menghasilkan uraian yang mirip. Gunakan sebagai bahan pertimbangan.
+        ${d.ai_error ? `<br><span style="color:var(--rej)">AI gagal dipakai: ${esc(d.ai_error)}</span>` : ''}</div>`;
+    box.onclick = async (e) => {
+      const b = e.target.closest('[data-sim]'); if (!b) return;
+      if (b.dataset.sim === 'refresh') return loadSimilarity(id, true);
+      if (b.dataset.sim === 'cmp') return simCompare(id, b.dataset.oid);
+      if (b.dataset.sim === 'exp') return simExplain(id, b.dataset.oid);
+    };
+  } catch (e) { box.innerHTML = `<h3>Cek Kemiripan</h3><div class="muted">Gagal memeriksa: ${esc(e.message)}</div>`; }
+}
+/** Tandai potongan 3 kata berurutan yang sama di kedua teks. */
+function markShared(a, b) {
+  const nw = (w) => w.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+  const prep = (s) => { const parts = String(s || '').split(/(\s+)/); const idx = []; parts.forEach((p, i) => { if (p && !/^\s+$/.test(p)) idx.push(i); }); return { parts, idx, n: idx.map((i) => nw(parts[i])) }; };
+  const tris = (n) => { const set = new Set(); for (let i = 0; i + 2 < n.length; i++) if (n[i] && n[i + 1] && n[i + 2]) set.add(n[i] + ' ' + n[i + 1] + ' ' + n[i + 2]); return set; };
+  const A = prep(a), B = prep(b), ta = tris(A.n), tb = tris(B.n);
+  const render = (X, other) => {
+    const hit = new Set();
+    for (let k = 0; k + 2 < X.n.length; k++) if (X.n[k] && X.n[k + 1] && X.n[k + 2] && other.has(X.n[k] + ' ' + X.n[k + 1] + ' ' + X.n[k + 2])) { hit.add(k); hit.add(k + 1); hit.add(k + 2); }
+    const idxPos = new Map(X.idx.map((pi, k) => [pi, k]));
+    return X.parts.map((p, i) => (idxPos.has(i) && hit.has(idxPos.get(i)) ? `<mark>${esc(p)}</mark>` : esc(p))).join('');
+  };
+  return [render(A, tb), render(B, ta)];
+}
+async function simCompare(id, oid) {
+  try {
+    const { a, b } = await api(`/api/reports/${id}/similarity/compare/${oid}`);
+    const sec = (label, k) => { const [x, y] = markShared(a[k], b[k]); return `<h4 style="grid-column:1/-1;margin:8px 0 0">${label}</h4><div class="tx">${x || '-'}</div><div class="tx">${y || '-'}</div>`; };
+    await Swal.fire({ width: 'min(1100px, 96vw)', showCloseButton: true, showConfirmButton: false,
+      html: `<div class="cmp"><div><h4>${esc(a.tar_number)} · ${esc(a.owner_name)}</h4><div class="muted" style="font-size:12px">${esc(a.judul || '')}</div></div>
+        <div><h4>${esc(b.tar_number)} · ${esc(b.owner_name)}</h4><div class="muted" style="font-size:12px">${esc(b.judul || '')}</div></div>
+        ${sec('Kronologi & Deskripsi Problem', 'kronologi')}${sec('Analisa Problem', 'analisa')}${sec('Tindakan Perbaikan & Pencegahan', 'tindakan')}</div>
+        <div class="sim-note" style="text-align:left"><mark>Sorotan kuning</mark> = rangkaian kata yang sama di kedua TAR.</div>` });
+  } catch (e) { showError(e); }
+}
+async function simExplain(id, oid) {
+  Swal.fire({ title: 'Meminta penjelasan AI…', allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() });
+  try {
+    const d = await api(`/api/reports/${id}/similarity/explain`, { json: { other_id: Number(oid) } });
+    Swal.fire({ title: 'Penjelasan AI', html: `<div style="text-align:left;white-space:pre-wrap;font-size:14px">${esc(d.text)}</div><div class="sim-note" style="text-align:left">Ringkasan otomatis oleh AI; periksa kembali dengan membandingkan kedua TAR.</div>`, confirmButtonColor: '#1E3A8A' });
+  } catch (e) { Swal.close(); showError(e); }
+}
+
+async function adminAI() {
+  const d = await api('/api/admin/ai');
+  $('#tab').innerHTML = `<p class="muted">Memeriksa kemiripan setiap TAR yang dikirim dengan TAR lain agar Group Leader dapat melihat kemungkinan salin-tempel. Hasil muncul di Approval &amp; Review.
+      Lapis teks berjalan tanpa AI; lapis AI (embedding) menambah deteksi kemiripan makna. <b>Teks TAR dikirim ke penyedia AI</b> saat AI aktif; foto tidak dikirim.</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+      <label class="sw"><input type="checkbox" id="ai_on" ${d.enabled ? 'checked' : ''}><span></span> Aktifkan fitur Cek Kemiripan</label>
+      <label class="sw"><input type="checkbox" id="ai_use" ${d.use_ai ? 'checked' : ''}><span></span> Gunakan AI (embedding) untuk kemiripan makna</label></div>
+    <div class="field"><label class="fl" for="ai_base">Base URL penyedia AI</label><input class="inp" id="ai_base" value="${esc(d.base_url)}" placeholder="https://ai.sumopod.com/v1"></div>
+    <div class="field"><label class="fl" for="ai_token">Token API</label><input class="inp" id="ai_token" type="password" autocomplete="new-password" placeholder="${d.has_token ? 'Tersimpan (' + esc(d.token_hint) + ') — kosongkan bila tidak diganti' : 'Tempel token di sini'}">
+      ${d.has_token ? '<label style="display:flex;gap:6px;align-items:center;font-size:12px;margin-top:4px"><input type="checkbox" id="ai_clear"> Hapus token tersimpan</label>' : ''}</div>
+    <div class="grid5" style="grid-template-columns:repeat(2,1fr)">
+      <div class="field"><label class="fl" for="ai_emb">Model embedding</label><input class="inp" id="ai_emb" value="${esc(d.embed_model)}" placeholder="gemini/gemini-embedding-001"></div>
+      <div class="field"><label class="fl" for="ai_chat">Model chat (opsional, untuk tombol “Jelaskan”)</label><input class="inp" id="ai_chat" value="${esc(d.chat_model)}" placeholder="mis. claude-haiku-5-5"></div>
+      <div class="field"><label class="fl" for="ai_warn">Batas peringatan “Mirip” (%)</label><input class="inp" id="ai_warn" type="number" min="1" max="100" value="${d.warn}"></div>
+      <div class="field"><label class="fl" for="ai_exact">Batas “Sama persis” (%)</label><input class="inp" id="ai_exact" type="number" min="1" max="100" value="${d.exact}"></div>
+      <div class="field"><label class="fl" for="ai_cos">Kalibrasi makna AI (cosine dasar)</label><input class="inp" id="ai_cos" type="number" min="0" max="0.95" step="0.01" value="${esc(d.cos_floor)}" placeholder="kosong = otomatis (${d.cos_floor_effective})">
+        <small class="muted">Nilai cosine yang dianggap 0%. Bila kemiripan makna terasa terlalu rendah/tinggi, ubah di sini; nilai “cos” tiap hasil tampil di panel.</small></div></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px"><button class="btn navy" id="ai_save"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+      <button class="btn ghost" id="ai_test"><i class="fa-solid fa-vial"></i> Tes koneksi</button></div>
+    <div class="card" style="box-shadow:none;border:1px solid var(--line)"><h2 style="font-size:14px">TAR lama (yang dikirim sebelum fitur ini aktif)</h2>
+      <p class="muted" style="margin:0 0 10px">Buat embedding untuk semua TAR yang sudah dikirim agar ikut dibandingkan secara makna. Cukup dijalankan sekali; biayanya sangat kecil.</p>
+      <button class="btn ghost" id="ai_fill"><i class="fa-solid fa-gears"></i> Proses semua TAR</button> <button class="btn ghost sm" id="ai_stat">Lihat status</button>
+      <div id="ai_fillst" class="muted" style="margin-top:8px"></div></div>`;
+  const collect = () => ({ enabled: $('#ai_on').checked, use_ai: $('#ai_use').checked, base_url: $('#ai_base').value, token: $('#ai_token').value, clear_token: !!($('#ai_clear') && $('#ai_clear').checked),
+    embed_model: $('#ai_emb').value, chat_model: $('#ai_chat').value, warn: $('#ai_warn').value, exact: $('#ai_exact').value, cos_floor: $('#ai_cos').value });
+  const save = async () => { await api('/api/admin/ai', { method: 'PUT', json: collect() }); S.meta = await api('/api/meta'); };
+  $('#ai_save').onclick = async () => { try { await save(); toast('success', 'Pengaturan disimpan'); adminAI(); } catch (e) { showError(e); } };
+  $('#ai_test').onclick = async () => {
+    try {
+      await save();
+      Swal.fire({ title: 'Menguji koneksi…', allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() });
+      const r = await api('/api/admin/ai/test', { json: {} });
+      const line = (n, x) => x ? `<div style="text-align:left;margin:6px 0">${x.ok ? '✅' : '❌'} <b>${n}</b>: ${x.ok ? esc(n === 'Embedding' ? `berhasil, ${x.dimensi} dimensi, ${x.ms} ms` : `berhasil (“${x.jawaban}”), ${x.ms} ms`) : esc(x.error)}</div>` : '';
+      Swal.fire({ title: 'Hasil tes', html: line('Embedding', r.embedding) + line('Chat', r.chat) || 'Tidak ada yang diuji', confirmButtonColor: '#1E3A8A' });
+    } catch (e) { Swal.close(); showError(e); }
+  };
+  const stat = async () => { const x = (await api('/api/admin/ai')).backfill; $('#ai_fillst').textContent = x.total || x.running ? `${x.running ? 'Berjalan… ' : 'Selesai. '}${x.done} dari ${x.total} diproses${x.failed ? `, ${x.failed} gagal` : ''}${x.last_error ? ' — ' + x.last_error : ''}` : 'Belum pernah dijalankan.'; };
+  $('#ai_stat').onclick = () => stat().catch(showError);
+  $('#ai_fill').onclick = async () => { try { await save(); await api('/api/admin/ai/backfill', { json: {} }); toast('info', 'Proses dimulai di server'); setTimeout(() => stat().catch(() => {}), 1500); } catch (e) { showError(e); } };
+  stat().catch(() => {});
+}
+
+/* =====================================================================
+   Kelola Unit (Super admin & Admin): tambah, edit, hapus
+   ===================================================================== */
+const unitForm = (u = {}) => `<div class="sw-form">
+  <label>Jobsite</label><input id="un_js" class="swal2-input inp" list="un_jslist" value="${esc(u.jobsite || '')}" placeholder="mis. BBM" style="margin:0;text-transform:uppercase" autocomplete="off">
+  <datalist id="un_jslist">${(S.jobsites || []).map((j) => `<option value="${esc(j)}">`).join('')}</datalist>
+  <label>Code Unit</label><input id="un_code" class="swal2-input inp" value="${esc(u.code_unit || '')}" style="margin:0" autocomplete="off">
+  <label>Merk Unit</label><input id="un_merk" class="swal2-input inp" value="${esc(u.merk_unit || '')}" style="margin:0" autocomplete="off">
+  <label>Model Unit</label><input id="un_model" class="swal2-input inp" value="${esc(u.model_unit || '')}" style="margin:0" autocomplete="off">
+  <label>Machine SN</label><input id="un_sn" class="swal2-input inp" value="${esc(u.machine_sn || '')}" style="margin:0" autocomplete="off"></div>`;
+const unitVals = () => ({ jobsite: $('#un_js').value, code_unit: $('#un_code').value, merk_unit: $('#un_merk').value, model_unit: $('#un_model').value, machine_sn: $('#un_sn').value });
+async function adminUnits() {
+  const d = await api('/api/admin/units');
+  S.jobsites = d.jobsites;
+  $('#tab').innerHTML = `<div class="toolbar"><span class="muted">Master unit per jobsite. Mekanik hanya melihat unit jobsite-nya sendiri. Perubahan di sini tidak mengubah isi laporan yang sudah dibuat.</span><span class="grow"></span>
+    <button class="btn" id="unAdd"><i class="fa-solid fa-plus"></i> Tambah unit</button></div><div id="untbl"></div>`;
+  const key = (r) => r.jobsite + '|' + r.code_unit;
+  const cols = [
+    { label: 'Jobsite', text: (r) => r.jobsite, render: (r) => esc(r.jobsite), filter: 'select', options: d.jobsites },
+    { label: 'Code Unit', text: (r) => r.code_unit, render: (r) => `<b>${esc(r.code_unit)}</b>`, filter: 'text' },
+    { label: 'Merk', text: (r) => r.merk_unit, render: (r) => esc(r.merk_unit), filter: 'text' },
+    { label: 'Model', text: (r) => r.model_unit, render: (r) => esc(r.model_unit), filter: 'text' },
+    { label: 'Machine SN', text: (r) => r.machine_sn || '', render: (r) => esc(r.machine_sn || '-'), filter: 'text' },
+    { label: 'Dipakai', text: (r) => r.dipakai, render: (r) => `${r.dipakai} TAR`, filter: false, cls: 'c' },
+    { label: 'Aksi', text: () => '', filter: false, render: (r) => `<div style="display:flex;gap:6px;justify-content:flex-end">${actBtn('edit', key(r), 'fa-pen', 'Edit unit')}${actBtn('del', key(r), 'fa-trash', 'Hapus unit', 'del')}</div>` },
+  ];
+  const refresh = async () => { S.meta = await api('/api/meta'); adminUnits(); };
+  dataTable($('#untbl'), cols, d.rows, { empty: 'Belum ada unit', onAction: async (a, id) => {
+    const u = d.rows.find((r) => key(r) === id); if (!u) return;
+    const q = `?jobsite=${encodeURIComponent(u.jobsite)}&code=${encodeURIComponent(u.code_unit)}`;
+    try {
+      if (a === 'edit') {
+        const r = await Swal.fire({ title: 'Edit unit', html: unitForm(u) + (u.dipakai ? `<p class="muted" style="font-size:12px;text-align:left">${u.dipakai} TAR memakai unit ini. Laporan lama tetap menyimpan data unit saat dibuat.</p>` : ''),
+          showCancelButton: true, confirmButtonText: 'Simpan', cancelButtonText: 'Batal', focusConfirm: false, confirmButtonColor: '#1E3A8A', preConfirm: unitVals });
+        if (r.isConfirmed) { await api('/api/admin/units' + q, { method: 'PUT', json: r.value }); toast('success', 'Unit diperbarui'); refresh(); }
+      } else if (a === 'del') {
+        const r = await Swal.fire({ title: 'Hapus unit?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Hapus', cancelButtonText: 'Batal', confirmButtonColor: '#DC2626',
+          text: `${u.code_unit} (${u.jobsite}) akan dihapus dari master unit.${u.dipakai ? ` ${u.dipakai} TAR yang memakainya tidak ikut terhapus.` : ''}` });
+        if (r.isConfirmed) { await api('/api/admin/units' + q, { method: 'DELETE' }); toast('success', 'Unit dihapus'); refresh(); }
+      }
+    } catch (e) { showError(e); }
+  } });
+  $('#unAdd').onclick = async () => {
+    const r = await Swal.fire({ title: 'Tambah unit', html: unitForm(), showCancelButton: true, confirmButtonText: 'Tambah', cancelButtonText: 'Batal', focusConfirm: false, confirmButtonColor: '#1E3A8A', preConfirm: unitVals });
+    if (!r.isConfirmed) return;
+    try { await api('/api/admin/units', { json: r.value }); toast('success', 'Unit ditambahkan'); refresh(); } catch (e) { showError(e); }
+  };
+}
+
+async function adminHooks() {
+  const s = await api('/api/admin/settings');
+  const fields = [['webhook_submitted', 'Laporan baru dikirim (menunggu review)'], ['webhook_approved', 'Laporan disetujui (Approved)'], ['webhook_rejected', 'Laporan ditolak (Rejected / revisi)'], ['webhook_reset', 'Lupa password (kirim tautan reset)']];
+  $('#tab').innerHTML = `<p class="muted">Isi URL webhook (mis. n8n yang meneruskan ke WAHA/Telegram). Sistem mengirim POST JSON berisi data laporan, pengirim, dan penerima (nama + nomor WA). Kosongkan untuk menonaktifkan.</p>
+    ${fields.map(([k, l]) => `<div class="field"><label class="fl" for="${k}">${l}</label><div style="display:flex;gap:8px"><input class="inp" id="${k}" type="url" placeholder="https://n8n.domain/webhook/..." value="${esc(s[k])}"><button class="btn ghost" data-test="${k}" title="Kirim tes"><i class="fa-solid fa-vial"></i></button></div></div>`).join('')}
+    <button class="btn navy" id="hSave"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>`;
+  const collect = () => Object.fromEntries(fields.map(([k]) => [k, $('#' + k).value.trim()]));
+  $('#hSave').onclick = async () => { try { await api('/api/admin/settings', { method: 'PUT', json: collect() }); toast('success', 'Webhook disimpan'); } catch (e) { showError(e); } };
+  $$('[data-test]').forEach((b) => (b.onclick = async () => {
+    try { await api('/api/admin/settings', { method: 'PUT', json: collect() }); const r = await api('/api/admin/settings/test', { json: { key: b.dataset.test } }); toast(r.ok ? 'success' : 'warning', `Webhook merespons HTTP ${r.status}`); }
+    catch (e) { showError(e); }
+  }));
+}
+
+/* =====================================================================
+   Fitur SKL (Surat Kesepakatan Lembur)
+   ===================================================================== */
+const sklStatusLabel = (s) => (s === 'Approved GL' ? 'Menunggu Super Admin' : s);
+const sklBadge = (s) => `<span class="badge-st ${ST[s] || ''}">${esc(sklStatusLabel(s))}</span>`;
+
+async function pageSklInput(editId) {
+  let editing = null;
+  if (editId) {
+    const d = await api('/api/skl/' + editId);
+    if (!d.skl.can.edit) { toast('warning', 'SKL ini tidak dapat direvisi'); location.hash = '#/skl-input'; return; }
+    editing = d.skl;
+  }
+  const js = S.user.jobsite;
+  const leaders = (S.meta.leaders || []).filter((l) => !js || l.jobsite === js);
+  const rejNote = editing ? (editing.rejected_by_role === 'Super admin' ? editing.catatan_sa : editing.catatan_gl) : '';
+  const rejBy = editing ? (editing.rejected_by_role || 'Atasan') : '';
+
+  $('#view').innerHTML = `
+    <div class="card fsec">
+      <h2><i class="fa-solid fa-clock"></i> ${editing ? `Revisi SKL — ${esc(editing.skl_number)}` : 'Form Input SKL (Surat Kesepakatan Lembur)'}</h2>
+      ${editing ? `<div class="banner"><b><i class="fa-solid fa-triangle-exclamation"></i> SKL ditolak oleh ${esc(rejBy)}.</b> Catatan: ${esc(rejNote || '-')}</div>` : ''}
+      ${!js ? '<div class="banner"><b>Akun Anda belum memiliki jobsite.</b> Hubungi Super admin agar daftar Group Leader tampil sesuai jobsite.</div>' : ''}
+      <p class="muted" style="margin:0 0 14px">Pemohon: <b>${esc(S.user.nama_lengkap)}</b> · NRP: <b>${esc(S.user.username)}</b> · Departemen: <b>Plant</b>${js ? ` · Jobsite: <b>${esc(js)}</b>` : ''}</p>
+      <div class="skl-grid">
+        <div class="field">
+          <label class="fl" for="skl_tgl">Hari / Tanggal</label>
+          <input class="inp" id="skl_tgl" type="date" value="${esc(editing ? editing.tanggal : todayJkt())}">
+        </div>
+        <div class="field">
+          <label class="fl" for="skl_start">Waktu Start</label>
+          <input class="inp" id="skl_start" type="time" value="${esc(editing ? editing.waktu_start : '')}">
+        </div>
+        <div class="field">
+          <label class="fl" for="skl_stop">Waktu Stop</label>
+          <input class="inp" id="skl_stop" type="time" value="${esc(editing ? editing.waktu_stop : '')}">
+        </div>
+        <div class="field">
+          <label class="fl" for="skl_gl">Group Leader yang Dituju</label>
+          <select class="inp" id="skl_gl">
+            <option value="">-- pilih Group Leader --</option>
+            ${leaders.map((l) => `<option value="${l.id}" ${editing && editing.leader_id === l.id ? 'selected' : ''}>${esc(l.nama_lengkap)}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label class="fl" for="skl_uraian">Uraian Pekerjaan</label>
+        <textarea class="inp" id="skl_uraian" rows="4" maxlength="3000" placeholder="Tuliskan uraian pekerjaan lembur secara jelas…">${esc(editing ? editing.uraian_pekerjaan : '')}</textarea>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap">
+        ${editing ? '<a class="btn ghost" href="#/skl-input">Batal Revisi</a>' : ''}
+        <button class="btn navy" id="sklSubmit"><i class="fa-solid fa-paper-plane"></i> ${editing ? 'Kirim Revisi SKL' : 'Kirim SKL'}</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="toolbar"><span class="pill-title">Daftar SKL Saya</span></div>
+      <div id="sklTbl"></div>
+    </div>`;
+
+  const loadList = async () => {
+    const { rows } = await api('/api/skl');
+    const cols = [
+      { label: 'No', text: (r, i) => i + 1, render: (r, i) => i + 1, filter: false, cls: 'c' },
+      { label: 'No SKL', text: (r) => r.skl_number, render: (r) => `<span style="white-space:nowrap">${esc(r.skl_number)}</span>`, filter: 'text' },
+      { label: 'Hari / Tanggal', text: (r) => fmtFullDayDate(r.tanggal), render: (r) => esc(fmtFullDayDate(r.tanggal)), filter: 'text' },
+      { label: 'Waktu', text: (r) => `${r.waktu_start} - ${r.waktu_stop}`, render: (r) => `<span style="white-space:nowrap">${esc(r.waktu_start)} – ${esc(r.waktu_stop)}</span>`, filter: 'text' },
+      { label: 'Uraian Pekerjaan', text: (r) => r.uraian_pekerjaan, render: (r) => esc(r.uraian_pekerjaan.length > 70 ? r.uraian_pekerjaan.slice(0, 70) + '…' : r.uraian_pekerjaan), filter: 'text' },
+      { label: 'Group Leader', text: (r) => r.leader_name || '', render: (r) => esc(r.leader_name || '-'), filter: 'text' },
+      { label: 'Status', text: (r) => sklStatusLabel(r.status), render: (r) => sklBadge(r.status), filter: 'select', options: ['Submitted', 'Menunggu Super Admin', 'Approved', 'Rejected'] },
+      { label: 'Aksi', text: () => '', filter: false, render: (r) => `<div style="display:flex;gap:6px;justify-content:flex-end">
+        ${actBtn('view', r.id, 'fa-eye', 'Lihat & Cetak')}
+        ${r.status === 'Rejected' ? actBtn('edit', r.id, 'fa-pen', 'Revisi SKL') : ''}
+        ${r.status === 'Rejected' ? actBtn('del', r.id, 'fa-trash', 'Hapus SKL', 'del') : ''}</div>` },
+    ];
+    dataTable($('#sklTbl'), cols, rows, {
+      empty: 'Belum ada SKL yang dibuat.',
+      onAction: (a, id) => {
+        if (a === 'view') openSklDetail(id, loadList);
+        else if (a === 'edit') location.hash = '#/skl-input/' + id;
+        else if (a === 'del') deleteSkl(id, loadList);
+      },
+    });
+  };
+
+  $('#sklSubmit').onclick = async () => {
+    const body = {
+      tanggal: $('#skl_tgl').value,
+      waktu_start: $('#skl_start').value,
+      waktu_stop: $('#skl_stop').value,
+      uraian_pekerjaan: $('#skl_uraian').value.trim(),
+      leader_id: $('#skl_gl').value,
+    };
+    const errs = [];
+    if (!body.tanggal) errs.push('Hari / Tanggal wajib diisi');
+    if (!body.waktu_start) errs.push('Waktu Start wajib diisi');
+    if (!body.waktu_stop) errs.push('Waktu Stop wajib diisi');
+    if (!body.uraian_pekerjaan) errs.push('Uraian pekerjaan wajib diisi');
+    if (!body.leader_id) errs.push('Group Leader yang dituju wajib dipilih');
+    if (errs.length) return showError({ message: 'Lengkapi data berikut:', details: errs }, 'Form SKL belum lengkap');
+
+    const cf = await Swal.fire({
+      title: editing ? 'Kirim Revisi SKL?' : 'Kirim SKL?',
+      text: 'SKL akan dikirim ke Group Leader yang dipilih untuk direview.',
+      icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, kirim', cancelButtonText: 'Batal', confirmButtonColor: '#1E3A8A',
+    });
+    if (!cf.isConfirmed) return;
+
+    const btn = $('#sklSubmit'); btn.disabled = true;
+    try {
+      if (editing) {
+        await api('/api/skl/' + editing.id, { method: 'PUT', json: body });
+        toast('success', 'Revisi SKL berhasil dikirim');
+        location.hash = '#/skl-input';
+      } else {
+        await api('/api/skl', { json: body });
+        toast('success', 'SKL berhasil dikirim ke Group Leader');
+        $('#skl_start').value = '';
+        $('#skl_stop').value = '';
+        $('#skl_uraian').value = '';
+        await loadList();
+      }
+    } catch (e) { showError(e, 'Gagal mengirim SKL'); }
+    finally { btn.disabled = false; }
+  };
+
+  await loadList();
+}
+
+async function pageSklApproval() {
+  const isSA = S.user.role === 'Super admin';
+  const pendingStatus = isSA ? 'Approved GL' : 'Submitted';
+  const pendingLabel = isSA ? 'Menunggu Approval' : 'Menunggu Review';
+  const allLabel = isSA ? 'Semua SKL' : 'Riwayat SKL Saya';
+  let tab = S.sklTab || 'pending';
+
+  $('#view').innerHTML = `
+    <div class="card">
+      <div class="tabs" id="sklTabs">
+        <button data-t="pending" class="${tab === 'pending' ? 'on' : ''}"><i class="fa-solid fa-hourglass-half"></i> ${pendingLabel}</button>
+        <button data-t="all" class="${tab === 'all' ? 'on' : ''}"><i class="fa-solid fa-list"></i> ${allLabel}</button>
+      </div>
+      <div class="toolbar" id="sklFilterBar" ${tab === 'pending' ? 'hidden' : ''}>
+        <label class="fl" style="margin:0" for="sklMonth">Filter Bulan</label>
+        <input type="month" class="inp" id="sklMonth" style="width:auto">
+        <button class="btn ghost sm" id="sklMonthClr">Semua bulan</button>
+      </div>
+      <div id="sklApprTbl"></div>
+    </div>`;
+
+  const load = async () => {
+    const qs = new URLSearchParams();
+    if (tab === 'pending') qs.set('status', pendingStatus);
+    else if ($('#sklMonth').value) qs.set('month', $('#sklMonth').value);
+    const { rows } = await api('/api/skl?' + qs.toString());
+    const cols = [
+      { label: 'No', text: (r, i) => i + 1, render: (r, i) => i + 1, filter: false, cls: 'c' },
+      { label: 'No SKL', text: (r) => r.skl_number, render: (r) => `<span style="white-space:nowrap">${esc(r.skl_number)}</span>`, filter: 'text' },
+      { label: 'Pemohon', text: (r) => `${r.owner_name} ${r.owner_nrp}`, render: (r) => `${ownerCell(r)}<small class="muted" style="display:block;padding-left:36px">${esc(r.owner_nrp)}</small>`, filter: 'text' },
+      { label: 'Hari / Tanggal', text: (r) => fmtFullDayDate(r.tanggal), render: (r) => esc(fmtFullDayDate(r.tanggal)), filter: 'text' },
+      { label: 'Waktu', text: (r) => `${r.waktu_start} - ${r.waktu_stop}`, render: (r) => `<span style="white-space:nowrap">${esc(r.waktu_start)} – ${esc(r.waktu_stop)}</span>`, filter: 'text' },
+      { label: 'Uraian Pekerjaan', text: (r) => r.uraian_pekerjaan, render: (r) => esc(r.uraian_pekerjaan.length > 60 ? r.uraian_pekerjaan.slice(0, 60) + '…' : r.uraian_pekerjaan), filter: 'text' },
+      ...(isSA ? [{ label: 'Group Leader', text: (r) => r.leader_name || '', render: (r) => esc(r.leader_name || '-'), filter: 'text' }] : []),
+      { label: 'Status', text: (r) => sklStatusLabel(r.status), render: (r) => sklBadge(r.status), filter: 'select', options: ['Submitted', 'Menunggu Super Admin', 'Approved', 'Rejected'] },
+      { label: 'Aksi', text: () => '', filter: false, cls: 'c', render: (r) => {
+        const canReview = (isSA && r.status === 'Approved GL') || (!isSA && r.status === 'Submitted');
+        return canReview
+          ? `<button class="btn sm" data-act="view" data-id="${r.id}"><i class="fa-solid fa-clipboard-check"></i> Review</button>`
+          : actBtn('view', r.id, 'fa-eye', 'Lihat & Cetak');
+      } },
+    ];
+    dataTable($('#sklApprTbl'), cols, rows, {
+      empty: tab === 'pending' ? 'Tidak ada SKL yang menunggu keputusan 🎉' : 'Belum ada data SKL.',
+      onAction: (a, id) => a === 'view' && openSklDetail(id, load),
+    });
+  };
+
+  $('#sklTabs').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    tab = S.sklTab = b.dataset.t;
+    $$('#sklTabs button').forEach((x) => x.classList.toggle('on', x.dataset.t === tab));
+    $('#sklFilterBar').hidden = tab === 'pending';
+    load().catch(showError);
+  });
+  $('#sklMonth').addEventListener('change', () => load().catch(showError));
+  $('#sklMonthClr').addEventListener('click', () => { $('#sklMonth').value = ''; load().catch(showError); });
+  await load();
+}
+
+async function deleteSkl(id, after) {
+  const r = await Swal.fire({
+    title: 'Hapus SKL ini?', text: 'Data SKL akan dihapus permanen.', icon: 'warning',
+    showCancelButton: true, confirmButtonText: 'Hapus', cancelButtonText: 'Batal', confirmButtonColor: '#DC2626',
+  });
+  if (!r.isConfirmed) return;
+  try { await api('/api/skl/' + id, { method: 'DELETE' }); toast('success', 'SKL dihapus'); closeModal(); after && after(); }
+  catch (e) { showError(e); }
+}
+
+async function openSklDetail(id, onChange) {
+  try {
+    const d = await api('/api/skl/' + id);
+    const s = d.skl;
+    $('#modalBody').innerHTML = `
+      <div class="dh"><h2>${esc(s.skl_number)}</h2><div>${sklBadge(s.status)} <span class="muted">· Surat Kesepakatan Lembur</span></div></div>
+      <div class="db">
+        <div class="kv">
+          <div><small>Nama Pemohon</small><b>${esc(s.owner_name)}</b></div>
+          <div><small>NRP</small>${esc(s.owner_nrp)}</div>
+          <div><small>Departemen</small>Plant</div>
+          <div><small>Hari / Tanggal</small>${esc(fmtFullDayDate(s.tanggal))}</div>
+          <div><small>Waktu Start</small>${esc(s.waktu_start)}</div>
+          <div><small>Waktu Stop</small>${esc(s.waktu_stop)}</div>
+          <div><small>Group Leader Tujuan</small>${esc(s.leader_name || '-')}</div>
+          <div><small>Jobsite</small>${esc(s.jobsite || '-')}</div>
+          <div><small>Waktu Pengajuan</small>${fmtTs(s.submitted_at)}</div>
+        </div>
+        <div class="sect"><h3>Uraian Pekerjaan</h3><div class="tx">${esc(s.uraian_pekerjaan)}</div></div>
+        ${s.gl_decided_at ? `<div class="sect"><h3>Dicek oleh (Atasan Langsung / Group Leader)</h3>
+          <div class="kv" style="margin-bottom:8px">
+            <div><small>Nama</small>${esc(s.gl_decided_by_name || '-')}</div>
+            <div><small>NRP</small>${esc(s.gl_decided_by_nrp || '-')}</div>
+            <div><small>Keputusan</small>${s.gl_decision === 'Approved' ? '<span class="badge-st st-app">Disetujui</span>' : '<span class="badge-st st-rej">Tidak Disetujui</span>'} <small style="display:inline">· ${fmtTs(s.gl_decided_at)}</small></div>
+          </div>
+          <div class="tx">${esc(s.catatan_gl || '-')}</div></div>` : ''}
+        ${s.sa_decided_at ? `<div class="sect"><h3>Keputusan Super Admin (Section Head / Dept. Head / PIC)</h3>
+          <div class="kv" style="margin-bottom:8px">
+            <div><small>Nama</small><b>${esc(s.sa_decided_by_name || '-')}</b></div>
+            <div><small>NRP</small>${esc(s.sa_decided_by_nrp || '-')}</div>
+            <div><small>Waktu Keputusan</small>${fmtTs(s.sa_decided_at)}</div>
+          </div>
+          ${s.catatan_sa ? `<div class="tx">${esc(s.catatan_sa)}</div>` : ''}</div>` : ''}
+        ${s.can.gl_review ? `<div class="skl-review-box">
+          <h3><i class="fa-solid fa-clipboard-check"></i> Review &amp; Approval Group Leader</h3>
+          <div class="field" style="margin-bottom:10px">
+            <label class="fl" for="sklGlCat">Catatan <span style="color:var(--rej)">*</span> (wajib diisi)</label>
+            <textarea class="inp" id="sklGlCat" rows="3" maxlength="3000" placeholder="Tuliskan catatan persetujuan atau alasan penolakan…"></textarea>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn green" id="sklGlAppr"><i class="fa-solid fa-circle-check"></i> Approve (Teruskan ke Super Admin)</button>
+            <button class="btn red" id="sklGlRej"><i class="fa-solid fa-circle-xmark"></i> Reject (Kembalikan ke Mekanik)</button>
+          </div>
+        </div>` : ''}
+        <div class="sect" style="margin-top:16px"><h3>Audit Trail</h3><ul class="log">${d.log.map((l) => `<li><b>${esc(l.action_taken)}</b> — ${esc(l.actor_name || l.actor_user)} <small>· ${fmtTs(l.ts)}</small>${l.catatan ? `<br><small>${esc(l.catatan)}</small>` : ''}</li>`).join('') || '<li class="muted">Belum ada riwayat</li>'}</ul></div>
+      </div>
+      <div class="da">
+        ${s.can.sa_review ? '<button class="btn green" id="sklSaAppr"><i class="fa-solid fa-circle-check"></i> Approve</button><button class="btn red" id="sklSaRej"><i class="fa-solid fa-circle-xmark"></i> Reject</button>' : ''}
+        ${s.can.edit ? '<button class="btn" id="sklEdit"><i class="fa-solid fa-pen"></i> Revisi SKL</button>' : ''}
+        <button class="btn ghost" id="sklPrint"><i class="fa-solid fa-print"></i> Cetak A4</button>
+        <a class="btn ghost" href="/api/skl/${s.id}/pdf" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> Unduh PDF</a>
+        ${s.can.delete ? '<button class="btn ghost" id="sklDel" style="color:var(--rej)"><i class="fa-solid fa-trash"></i> Hapus</button>' : ''}
+      </div>`;
+    modalEl.hidden = false; modalEl.scrollTop = 0;
+
+    const done = () => { closeModal(); onChange ? onChange() : router(); };
+    $('#sklPrint').onclick = () => printSkl(d);
+    if ($('#sklEdit')) $('#sklEdit').onclick = () => { closeModal(); location.hash = '#/skl-input/' + s.id; };
+    if ($('#sklDel')) $('#sklDel').onclick = () => deleteSkl(s.id, onChange || router);
+
+    const submitGl = async (action) => {
+      const catatan = $('#sklGlCat').value.trim();
+      if (!catatan) { toast('warning', 'Catatan wajib diisi terlebih dahulu'); $('#sklGlCat').focus(); return; }
+      const approve = action === 'approve';
+      const cf = await Swal.fire({
+        title: approve ? 'Approve SKL ini?' : 'Reject SKL ini?',
+        text: approve ? 'SKL akan diteruskan ke Super Admin untuk persetujuan final.' : 'SKL akan dikembalikan ke mekanik dengan catatan Anda.',
+        icon: approve ? 'question' : 'warning', showCancelButton: true,
+        confirmButtonText: approve ? 'Ya, Approve' : 'Ya, Reject', cancelButtonText: 'Batal',
+        confirmButtonColor: approve ? '#059669' : '#DC2626',
+      });
+      if (!cf.isConfirmed) return;
+      try {
+        await api(`/api/skl/${s.id}/gl-decision`, { json: { action, catatan } });
+        toast('success', approve ? 'SKL disetujui & diteruskan ke Super Admin' : 'SKL ditolak & dikembalikan ke mekanik');
+        done();
+      } catch (e) { showError(e); }
+    };
+    if ($('#sklGlAppr')) $('#sklGlAppr').onclick = () => submitGl('approve');
+    if ($('#sklGlRej')) $('#sklGlRej').onclick = () => submitGl('reject');
+
+    if ($('#sklSaAppr')) $('#sklSaAppr').onclick = async () => {
+      const cf = await Swal.fire({
+        title: 'Approve SKL ini?',
+        text: 'SKL akan disetujui final dan tanda tangan digital (QR Code) Anda akan dicantumkan pada dokumen cetak.',
+        icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Approve', cancelButtonText: 'Batal', confirmButtonColor: '#059669',
+      });
+      if (!cf.isConfirmed) return;
+      try {
+        await api(`/api/skl/${s.id}/sa-decision`, { json: { action: 'approve' } });
+        toast('success', 'SKL disetujui final');
+        done();
+      } catch (e) { showError(e); }
+    };
+
+    if ($('#sklSaRej')) $('#sklSaRej').onclick = async () => {
+      const cf = await Swal.fire({
+        title: 'Reject SKL ini?', icon: 'warning', showCancelButton: true, focusConfirm: false,
+        confirmButtonText: 'Reject', cancelButtonText: 'Batal', confirmButtonColor: '#DC2626',
+        html: '<div class="sw-form"><label for="saCat">Catatan penolakan (wajib — akan dikembalikan langsung ke mekanik terkait)</label><textarea id="saCat" class="swal2-textarea inp" rows="4" maxlength="3000" style="margin:0;width:100%"></textarea></div>',
+        preConfirm: () => {
+          const v = $('#saCat').value.trim();
+          if (!v) return Swal.showValidationMessage('Catatan penolakan wajib diisi');
+          return v;
+        },
+      });
+      if (!cf.isConfirmed) return;
+      try {
+        await api(`/api/skl/${s.id}/sa-decision`, { json: { action: 'reject', catatan: cf.value } });
+        toast('success', 'SKL ditolak & dikembalikan ke mekanik');
+        done();
+      } catch (e) { showError(e); }
+    };
+  } catch (e) { showError(e); }
+}
+
+/** Cetak SKL A4 persis mengikuti format PDF template + logo HML merah marun + QR digital signature. */
+async function printSkl(d) {
+  const s = d.skl;
+  const sg = d.signatures || {};
+  const pm = sg.pemohon;
+  const sa = sg.superadmin;
+  const fmtQrTs = (t) => (t ? fmtTs(t) + ' WIB' : '');
+
+  $('#printArea').innerHTML = `
+    <div class="skl-sheet">
+      <div class="skl-hd">
+        <img src="/logo.png" alt="HML">
+        <div class="co">PT HARAPAN MITRA LESTARI</div>
+      </div>
+      <div class="skl-title">SURAT KESEPAKATAN LEMBUR</div>
+      <div class="skl-meta">
+        <div>
+          <div class="skl-row"><span class="k">Nama</span><span class="c">:</span><span class="v">${esc(s.owner_name)}</span></div>
+          <div class="skl-row"><span class="k">NRP</span><span class="c">:</span><span class="v">${esc(s.owner_nrp)}</span></div>
+          <div class="skl-row"><span class="k">Departemen</span><span class="c">:</span><span class="v">Plant</span></div>
+        </div>
+        <div>
+          <div class="skl-row"><span class="k">Hari / Tanggal</span><span class="c">:</span><span class="v">${esc(fmtFullDayDate(s.tanggal))}</span></div>
+          <div class="skl-row"><span class="k">Waktu Start</span><span class="c">:</span><span class="v">${esc(s.waktu_start)}</span></div>
+          <div class="skl-row"><span class="k">Stop</span><span class="c">:</span><span class="v">${esc(s.waktu_stop)}</span></div>
+        </div>
+      </div>
+      <div class="skl-sec">
+        <div class="skl-sec-h it">Uraian Pekerjaan;</div>
+        <div class="skl-lines">${esc(s.uraian_pekerjaan)}</div>
+      </div>
+      <div class="skl-check-hd">Dicek oleh (Atasan Langsung)</div>
+      <div class="skl-gl-row"><span class="k">Nama</span><span class="c">:</span><span class="v">${esc(s.gl_decided_by_name || '')}</span></div>
+      <div class="skl-gl-row"><span class="k">NRP</span><span class="c">:</span><span class="v">${esc(s.gl_decided_by_nrp || '')}</span></div>
+      <div class="skl-cbs">
+        <span class="skl-cb"><span class="skl-box">${s.gl_decision === 'Approved' ? '&#10003;' : ''}</span><span>Disetujui</span></span>
+        <span class="skl-cb"><span class="skl-box">${s.gl_decision === 'Rejected' ? '&#10003;' : ''}</span><span>Tidak Disetujui</span></span>
+      </div>
+      <div class="skl-sec">
+        <div class="skl-sec-h">Catatan;</div>
+        <div class="skl-lines">${esc(s.catatan_gl || '')}</div>
+      </div>
+      <div class="skl-sig-top">
+        <div>Diketahui oleh,</div>
+        <div>Pemohon</div>
+      </div>
+      <div class="skl-sigs">
+        <div class="skl-sig-col left">
+          <div class="skl-sig-line">HRGA Dept</div>
+        </div>
+        <div class="skl-sig-col">
+          ${sa ? `<div class="skl-qr">${sa.svg}</div><div class="skl-ts">${esc(fmtQrTs(sa.ts))}</div><div class="skl-nm">${esc(sa.name)}</div>` : ''}
+          <div class="skl-sig-line">Section Head/<br>Dept. Head/ PIC</div>
+        </div>
+        <div class="skl-sig-col">
+          ${pm ? `<div class="skl-qr">${pm.svg}</div><div class="skl-ts">${esc(fmtQrTs(pm.ts))}</div><div class="skl-nm">${esc(pm.name)}</div>` : ''}
+          <div class="skl-sig-line">Karyawan</div>
+        </div>
+      </div>
+      <div class="skl-foot">
+        <table>
+          <tr><td class="b">-</td><td colspan="2">SKL Harian dianggap sah jika telah ditandatangani oleh semua pihak terkait.</td></tr>
+          <tr><td class="b">-</td><td colspan="2">SKL Harian dijadikan dasar sebagai perhitungan lembur harian karyawan</td></tr>
+          <tr><td class="b">-</td><td class="k">Asli</td><td>: HRGA Dept.</td></tr>
+          <tr><td class="b">-</td><td class="k">Kuning</td><td>: Atasan</td></tr>
+          <tr><td class="b">-</td><td class="k">Biru</td><td>: Karyawan</td></tr>
+        </table>
+      </div>
+    </div>`;
+
+  let st = document.getElementById('pageFoot');
+  if (!st) { st = document.createElement('style'); st.id = 'pageFoot'; document.head.appendChild(st); }
+  st.textContent = '@page{size:A4;margin:10mm;@bottom-left{content:none}@bottom-right{content:none}}';
+  const imgs = $$('#printArea img');
+  await Promise.all(imgs.map((im) => (im.complete ? 1 : new Promise((ok) => { im.onload = im.onerror = ok; }))));
+  window.print();
+}
+
+/* =====================================================================
+   Foto profil (sidebar) – klik lingkaran untuk mengganti
+   ===================================================================== */
+function renderAvatar() {
+  const el = $('#uAv');
+  el.innerHTML = S.user.avatar_url ? `<img src="${esc(S.user.avatar_url)}" alt="Foto profil">` : '<i class="fa-regular fa-user"></i>';
+}
+/** Potong persegi dari tengah & perkecil ke 400x400 JPEG sebelum diunggah. */
+async function cropSquare(file, size = 400) {
+  const bmp = await createImageBitmap(file);
+  const s = Math.min(bmp.width, bmp.height);
+  const cv = document.createElement('canvas'); cv.width = cv.height = size;
+  cv.getContext('2d').drawImage(bmp, (bmp.width - s) / 2, (bmp.height - s) / 2, s, s, 0, 0, size, size);
+  return new Promise((r) => cv.toBlob(r, 'image/jpeg', 0.88));
+}
+async function changeAvatar() {
+  let blob = null; const has = !!S.user.avatar_url;
+  const r = await Swal.fire({
+    title: 'Foto profil', showCancelButton: true, showDenyButton: has, confirmButtonText: 'Simpan', denyButtonText: 'Hapus foto', cancelButtonText: 'Batal', confirmButtonColor: '#1E3A8A', focusConfirm: false,
+    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:12px"><div class="av-big" id="avPrev">${has ? `<img src="${esc(S.user.avatar_url)}" alt="">` : '<i class="fa-regular fa-user"></i>'}</div>
+      <label class="btn ghost sm" for="avFile"><i class="fa-solid fa-image"></i> Pilih foto</label><input id="avFile" class="sr" type="file" accept="image/jpeg,image/png,image/webp"><small class="muted">Foto dipotong persegi dari tengah · JPG / PNG / WEBP</small></div>`,
+    didOpen: () => {
+      $('#avFile').addEventListener('change', async (e) => {
+        const f = e.target.files[0]; if (!f) return;
+        if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { Swal.showValidationMessage('Format harus JPG, PNG, atau WEBP'); return; }
+        try { blob = await cropSquare(f); $('#avPrev').innerHTML = `<img src="${URL.createObjectURL(blob)}" alt="">`; Swal.resetValidationMessage(); }
+        catch { Swal.showValidationMessage('Gambar tidak dapat dibaca'); }
+      });
+    },
+    preConfirm: () => { if (!blob) { Swal.showValidationMessage('Pilih foto terlebih dahulu'); return false; } return blob; },
+  });
+  try {
+    if (r.isConfirmed) {
+      const fd = new FormData(); fd.append('file', r.value, 'avatar.jpg');
+      const d = await api('/api/me/avatar', { method: 'POST', body: fd });
+      S.user.avatar_url = d.avatar_url; renderAvatar(); toast('success', 'Foto profil diperbarui');
+    } else if (r.isDenied) {
+      await api('/api/me/avatar', { method: 'DELETE' });
+      S.user.avatar_url = null; renderAvatar(); toast('success', 'Foto profil dihapus');
+    }
+  } catch (e) { showError(e); }
+}
+$('#uAv').addEventListener('click', changeAvatar);
+$('#uAv').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); changeAvatar(); } });
+
+/* =====================================================================
+   Pop up (balon pesan) – isi diatur Super admin; tampil saat login/reload di Dashboard
+   ===================================================================== */
+function closePopup() { const o = $('#popup'); if (o) o.remove(); }
+function showPopup(msg, user) {
+  closePopup();
+  const o = document.createElement('div'); o.id = 'popup';
+  o.innerHTML = `<div class="bubble" role="dialog" aria-modal="true"><button class="bubble-x" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>${user ? `<div class="bubble-user">${user.avatar_url ? `<img src="${esc(user.avatar_url)}" alt="">` : '<div class="ph-none"><i class="fa-regular fa-user"></i></div>'}<b>${esc(user.nama)}</b></div>` : ''}<div class="bubble-tx">${esc(msg)}</div></div>`;
+  document.body.appendChild(o);
+  const onKey = (e) => { if (e.key === 'Escape') { closePopup(); document.removeEventListener('keydown', onKey); } };
+  document.addEventListener('keydown', onKey);
+  o.addEventListener('click', (e) => { if (e.target === o || e.target.closest('.bubble-x')) { closePopup(); document.removeEventListener('keydown', onKey); } });
+  $('.bubble-x', o).focus();
+}
+/** Ditampilkan sekali per login / reload halaman, saat membuka Dashboard. */
+function maybePopup() {
+  if (S.popupShown) return;
+  S.popupShown = true;
+  api('/api/popup').then((d) => { if (d.enabled && d.message) showPopup(d.message, d.user); }).catch(() => {});
+}
+
+/* =====================================================================
+   Notifikasi (polling 30 dtk + Web Notification bila diizinkan)
+   ===================================================================== */
+async function pollNotif(first) {
+  try {
+    const d = await api('/api/notifications');
+    if (!first && d.unread > S.unread && 'Notification' in window && Notification.permission === 'granted') {
+      const n = d.rows.find((x) => !x.is_read); if (n) new Notification('TAR System', { body: n.message, icon: '/logo.png' });
+    }
+    S.unread = d.unread; S.notifs = d.rows;
+    $('#bellN').hidden = !d.unread; $('#bellN').textContent = d.unread > 99 ? '99+' : d.unread;
+    if (!$('#notifPanel').hidden) renderNotif();
+  } catch { /* abaikan error sementara */ }
+}
+function startPoll() { stopPoll(); pollNotif(true); S.poll = setInterval(() => pollNotif(false), 30000); }
+function stopPoll() { if (S.poll) clearInterval(S.poll); S.poll = null; S.unread = 0; $('#bellN').hidden = true; $('#notifPanel').hidden = true; }
+function renderNotif() {
+  const rows = S.notifs || [];
+  $('#notifPanel').innerHTML = `<header><span>Notifikasi</span><button class="btn ghost sm" id="nAll">Tandai dibaca</button></header>
+    <div class="list">${rows.length ? rows.map((n) => `<div class="nitem ${n.is_read ? '' : 'unread'}" data-n="${n.id}" data-r="${n.report_id || ''}" data-s="${n.skl_id || ''}">${esc(n.message)}<small>${fmtTs(n.created_at)}</small></div>`).join('') : '<div class="empty">Belum ada notifikasi</div>'}</div>`;
+}
+$('#bell').addEventListener('click', async (e) => {
+  e.stopPropagation();
+  const p = $('#notifPanel');
+  if (!p.hidden) { p.hidden = true; return; }
+  if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+  await pollNotif(true); renderNotif(); p.hidden = false;
+});
+$('#notifPanel').addEventListener('click', async (e) => {
+  e.stopPropagation();
+  if (e.target.closest('#nAll')) { await api('/api/notifications/read', { json: {} }); pollNotif(true); return; }
+  const it = e.target.closest('.nitem'); if (!it) return;
+  api('/api/notifications/read', { json: { id: Number(it.dataset.n) } }).then(() => pollNotif(true)).catch(() => {});
+  $('#notifPanel').hidden = true;
+  if (it.dataset.s) openSklDetail(it.dataset.s);
+  else if (it.dataset.r) openDetail(it.dataset.r);
+});
+document.addEventListener('click', () => { $('#notifPanel').hidden = true; });
+
+/* =====================================================================
+   Sidebar, login, logout, ganti password
+   ===================================================================== */
+$('#burger').addEventListener('click', () => {
+  if (innerWidth <= 768) document.body.classList.toggle('sb-open');
+  else if (innerWidth <= 1024) document.body.classList.toggle('sb-open-wide');
+  else document.body.classList.toggle('collapsed');
+});
+$('#backdrop').addEventListener('click', () => document.body.classList.remove('sb-open'));
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('#loginBtn'); btn.disabled = true;
+  try {
+    const r = await api('/api/auth/login', { json: { username: $('#lu').value.trim(), password: $('#lp').value } });
+    $('#lp').value = ''; location.hash = '#/dashboard';
+    await startApp(r.user);
+  } catch (er) { showError(er, 'Login gagal'); }
+  finally { btn.disabled = false; }
+});
+$('#btnOut').addEventListener('click', async () => {
+  await api('/api/auth/logout', { method: 'POST', json: {} }).catch(() => {});
+  S.user = null; closeModal(); showLogin();
+});
+$('#btnPass').addEventListener('click', async () => {
+  const r = await Swal.fire({ title: 'Ganti password', showCancelButton: true, confirmButtonText: 'Simpan', cancelButtonText: 'Batal', focusConfirm: false,
+    html: `<div class="sw-form"><label>Password saat ini</label><input id="pw0" type="password" class="swal2-input inp" autocomplete="current-password" style="margin:0">
+      <label>Password baru (min 6 karakter)</label><input id="pw1" type="password" class="swal2-input inp" autocomplete="new-password" style="margin:0">
+      <label>Ulangi password baru</label><input id="pw2" type="password" class="swal2-input inp" autocomplete="new-password" style="margin:0"></div>`,
+    preConfirm: () => {
+      const a = $('#pw0').value, b = $('#pw1').value, c = $('#pw2').value;
+      if (!a || b.length < 6) return Swal.showValidationMessage('Isi semua kolom; password baru minimal 6 karakter');
+      if (b !== c) return Swal.showValidationMessage('Konfirmasi password tidak sama');
+      return { current: a, next: b };
+    } });
+  if (!r.isConfirmed) return;
+  try { await api('/api/auth/password', { json: r.value }); toast('success', 'Password berhasil diganti'); } catch (e) { showError(e); }
+});
+
+/* ---------- lupa password & reset lewat tautan ---------- */
+$('#forgot').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const r = await Swal.fire({ title: 'Lupa password', text: 'Masukkan username (NRP). Tautan reset akan dikirim ke WhatsApp/email yang terdaftar.', input: 'text', inputPlaceholder: 'Username (NRP)',
+    showCancelButton: true, confirmButtonText: 'Kirim tautan', cancelButtonText: 'Batal', confirmButtonColor: '#1E3A8A', inputValue: $('#lu').value.trim(),
+    inputValidator: (v) => (!v.trim() ? 'Username wajib diisi' : undefined) });
+  if (!r.isConfirmed) return;
+  try { const d = await api('/api/auth/forgot', { json: { username: r.value.trim() } }); Swal.fire({ icon: 'info', title: 'Permintaan diterima', text: d.message, confirmButtonColor: '#1E3A8A' }); }
+  catch (er) { showError(er); }
+});
+/** Bila URL berbentuk #/reset/<token>: tampilkan form password baru (token langsung dihapus dari URL). */
+async function handleReset() {
+  const m = location.hash.match(/^#\/reset\/([A-Za-z0-9_-]+)$/);
+  if (!m) return false;
+  history.replaceState(null, '', location.pathname);
+  showLogin();
+  const r = await Swal.fire({ title: 'Buat password baru', allowOutsideClick: false, showCancelButton: true, confirmButtonText: 'Simpan', cancelButtonText: 'Batal', confirmButtonColor: '#1E3A8A', focusConfirm: false,
+    html: `<div class="sw-form"><label>Password baru (min 6 karakter)</label><input id="rp1" type="password" class="swal2-input inp" autocomplete="new-password" style="margin:0">
+      <label>Ulangi password baru</label><input id="rp2" type="password" class="swal2-input inp" autocomplete="new-password" style="margin:0"></div>`,
+    preConfirm: () => {
+      const a = $('#rp1').value, b = $('#rp2').value;
+      if (a.length < 6) return Swal.showValidationMessage('Password minimal 6 karakter');
+      if (a !== b) return Swal.showValidationMessage('Konfirmasi password tidak sama');
+      return a;
+    } });
+  if (r.isConfirmed) {
+    try { await api('/api/auth/reset', { json: { token: m[1], password: r.value } }); await Swal.fire({ icon: 'success', title: 'Password berhasil diganti', text: 'Silakan login dengan password baru.', confirmButtonColor: '#1E3A8A' }); }
+    catch (er) { showError(er, 'Reset gagal'); }
+  }
+  return true;
+}
+
+/* ---------- start ---------- */
+(async () => {
+  if (await handleReset()) return;
+  try { const r = await api('/api/auth/me'); await startApp(r.user); }
+  catch { showLogin(); }
+})();
+</script>
+</body>
+</html>
